@@ -77,3 +77,17 @@ void Shader::linkProgram(GLuint vertexShader, GLuint fragmentShader)
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 }
+
+GLint Shader::getUniformLocation(const std::string& name)
+{
+	if(m_uniformLocations.find(name) != m_uniformLocations.end())
+		return m_uniformLocations[name];
+
+	GLint uniformLocation = glGetUniformLocation(m_programID, name.c_str());
+	m_uniformLocations[name] = uniformLocation;
+	if(uniformLocation == 1)
+		LOG_WARN("uniform: {}, is invalid", name);
+
+
+	return uniformLocation;
+}

@@ -3,6 +3,7 @@
 #include<GLCore/Core/Application.h>
 
 #include<glad/glad.h>
+#include<glm/glm.hpp>
 
 #include"OpenGL/Shader/Shader.h"
 
@@ -22,4 +23,5 @@ private:
 	GLuint m_ibo;
 
 	Shader m_shader;
+	glm::vec3 m_uniformColor;
 };

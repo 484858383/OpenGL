@@ -1,6 +1,7 @@
 #include "SandboxLayer.h"
 
 #include<GLCore/Util/OpenGLDebug.h>
+#include<imgui.h>
 
 using namespace GLCore;
 
@@ -65,11 +66,16 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	m_shader.bind();
+	m_shader.loadUniform("u_color", m_uniformColor.x, m_uniformColor.y, m_uniformColor.z);
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }
 
 void SandboxLayer::OnImGuiRender()
 {
-	// ImGui here
+	ImGui::Begin("test");
+
+	ImGui::ColorEdit3("clear color", (float*)&m_uniformColor);
+
+	ImGui::End();
 }
