@@ -1,7 +1,10 @@
 #pragma once
 
-#include <GLCore.h>
-#include <GLCoreUtils.h>
+#include<GLCore/Core/Application.h>
+
+#include<glad/glad.h>
+
+#include"OpenGL/Shader/Shader.h"
 
 class SandboxLayer : public GLCore::Layer
 {
@@ -15,4 +18,8 @@ public:
 	virtual void OnUpdate(GLCore::Timestep ts) override;
 	virtual void OnImGuiRender() override;
 private:
+	GLuint m_vao;
+	GLuint m_ibo;
+
+	Shader m_shader;
 };
