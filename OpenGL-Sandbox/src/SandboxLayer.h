@@ -6,6 +6,7 @@
 #include<glm/glm.hpp>
 
 #include"OpenGL/Shader/Shader.h"
+#include"OpenGL/Buffer/VertexArray.h"
 
 class SandboxLayer : public GLCore::Layer
 {
@@ -23,5 +24,6 @@ private:
 	GLuint m_ibo;
 
 	Shader m_shader;
+	VertexArray m_va;
 	glm::vec3 m_uniformColor;
 };

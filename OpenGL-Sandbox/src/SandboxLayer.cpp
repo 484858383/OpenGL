@@ -18,36 +18,22 @@ void SandboxLayer::OnAttach()
 {
 	Utils::EnableGLDebugging();
 
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-	glGenBuffers(1, &m_ibo);
-
-	glGenVertexArrays(1, &m_vao);
-	glBindVertexArray(m_vao);
-
-	float vertices[] =
+	std::vector<float> vertices =
 	{
-	 -0.5f,  0.5f,
+	 -0.5f,  0.5f, 
 	 -0.5f, -0.5f,
 	  0.5f, -0.5f,
 	  0.5f,  0.5f
 	};
 
-	unsigned indices[] =
+	std::vector<unsigned> indicies =
 	{
 		0, 1, 2,
 		2, 3, 0
 	};
 
-	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
-	glEnableVertexArrayAttrib(m_vao, 0);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned), indices, GL_STATIC_DRAW);
+	m_va.addAttribute("a_position", vertices, 2);
+	m_va.addIndexBuffer(indicies);
 }
 
 void SandboxLayer::OnDetach()
@@ -68,7 +54,7 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	m_shader.bind();
 	m_shader.loadUniform("u_color", m_uniformColor.x, m_uniformColor.y, m_uniformColor.z);
 
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, m_va.getNumberIndicies(), GL_UNSIGNED_INT, nullptr);
 }
 
 void SandboxLayer::OnImGuiRender()

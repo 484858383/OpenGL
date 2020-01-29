@@ -28,7 +28,7 @@ Shader::Shader(Shader&& other)
 Shader& Shader::operator=(Shader&& rhs)
 {
 	if(this == &rhs)
-		return;
+		return *this;
 
 	deleteData();
 
