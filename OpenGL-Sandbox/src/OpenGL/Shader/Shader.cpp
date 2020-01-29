@@ -18,9 +18,33 @@ Shader::Shader(const std::string& vertexShaderFilename, const std::string& fragm
 	linkProgram(vertexShader, fragmentShader);
 }
 
+Shader::Shader(Shader&& other)
+	:m_programID(other.m_programID), m_uniformLocations(std::move(other.m_uniformLocations))
+{
+	other.m_programID = 0;
+	other.m_uniformLocations.clear();
+	glUseProgram(m_programID);
+}
+
+Shader& Shader::operator=(Shader&& rhs)
+{
+	if(this == &rhs)
+		return;
+
+	deleteData();
+
+	m_programID = rhs.m_programID;
+	m_uniformLocations = std::move(rhs.m_uniformLocations);
+
+	rhs.m_programID = 0;
+	rhs.m_uniformLocations.clear();
+
+	return *this;
+}
+
 Shader::~Shader()
 {
-	glDeleteProgram(m_programID);
+	deleteData();
 }
 
 std::string Shader::getShaderSource(const std::string& sourceFilename)
@@ -90,4 +114,10 @@ GLint Shader::getUniformLocation(const std::string& name)
 
 
 	return uniformLocation;
+}
+
+void Shader::deleteData()
+{
+	glDeleteProgram(m_programID);
+	m_uniformLocations.clear();
 }

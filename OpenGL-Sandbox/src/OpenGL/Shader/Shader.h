@@ -8,6 +8,13 @@ class Shader
 {
 public:
 	Shader(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
+
+	Shader(const Shader& other) = delete;
+	Shader& operator=(const Shader& rhs) = delete;
+
+	Shader(Shader&& other);
+	Shader& operator=(Shader&& rhs);
+
 	~Shader();
 
 	GLuint getProgramID() const { return m_programID; }
@@ -68,7 +75,9 @@ private:
 	std::string getShaderSource(const std::string& sourceFilename);
 	GLuint compileShader(const char* shaderSource, GLenum shaderType);
 	void linkProgram(GLuint vertexShader, GLuint fragmentShader);
+
 	GLint getUniformLocation(const std::string& name);
+	void deleteData();
 private:
 	GLuint m_programID;
 	std::unordered_map<std::string, GLint> m_uniformLocations;
