@@ -23,7 +23,6 @@ Shader::Shader(Shader&& other)
 {
 	other.m_programID = 0;
 	other.m_uniformLocations.clear();
-	glUseProgram(m_programID);
 }
 
 Shader& Shader::operator=(Shader&& rhs)
@@ -120,4 +119,5 @@ void Shader::deleteData()
 {
 	glDeleteProgram(m_programID);
 	m_uniformLocations.clear();
+	m_programID = 0;
 }
