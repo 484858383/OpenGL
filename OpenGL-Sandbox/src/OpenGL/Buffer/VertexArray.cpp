@@ -7,6 +7,40 @@ VertexArray::VertexArray()
 	glGenVertexArrays(1, &m_ID);
 }
 
+VertexArray::VertexArray(VertexArray&& other)
+	:m_ID(other.m_ID), m_numberIndicies(other.m_numberIndicies),
+	 m_indexCounter(other.m_indexCounter), m_buffers(std::move(other.m_buffers)),
+	 m_layout(std::move(other.m_layout))
+{
+	other.m_ID = 0;
+	other.m_numberIndicies = 0;
+	other.m_indexCounter = 0;
+	other.m_buffers.clear();
+	other.m_layout.clear();
+}
+
+VertexArray& VertexArray::operator=(VertexArray&& rhs)
+{
+	if(this == &rhs)
+		return *this;
+
+	deleteData();
+
+	m_ID = rhs.m_ID;
+	m_numberIndicies = rhs.m_numberIndicies;
+	m_indexCounter = rhs.m_indexCounter;
+	m_buffers = std::move(rhs.m_buffers);
+	m_layout = std::move(rhs.m_layout);
+
+	rhs.m_ID = 0;
+	rhs.m_numberIndicies = 0;
+	rhs.m_indexCounter = 0;
+	rhs.m_buffers.clear();
+	rhs.m_layout.clear();
+
+	return *this;
+}
+
 VertexArray::~VertexArray()
 {
 	deleteData();

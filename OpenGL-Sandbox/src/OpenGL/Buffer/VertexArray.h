@@ -7,6 +7,13 @@ class VertexArray
 {
 public:
 	VertexArray();
+
+	VertexArray(const VertexArray& other) = delete;
+	VertexArray& operator=(const VertexArray& rhs) = delete;
+
+	VertexArray(VertexArray&& other);
+	VertexArray& operator=(VertexArray&& rhs);
+
 	~VertexArray();
 
 	void addAttribute(const std::string& attributeName, const std::vector<float>& data, int size);
