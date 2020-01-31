@@ -3,6 +3,7 @@
 #include<string>
 #include<unordered_map>
 #include<glad/glad.h>
+#include<glm/glm.hpp>
 
 class Shader
 {
@@ -22,6 +23,7 @@ public:
 	void bind() const { glUseProgram(m_programID); }
 	void unbind() const { glUseProgram(0); }
 
+	void loadUniformMatrix(const std::string& name, const glm::mat4& matrix);
 
 	template<typename... Ts>
 	void loadUniform(const std::string& name, Ts&&... args)

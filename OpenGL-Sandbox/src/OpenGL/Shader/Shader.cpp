@@ -5,6 +5,7 @@
 #include<cassert>
 
 #include<GLCore/Core/Log.h>
+#include<glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
 	:m_programID(glCreateProgram())
@@ -41,6 +42,11 @@ Shader& Shader::operator=(Shader&& rhs)
 	return *this;
 }
 
+void Shader::loadUniformMatrix(const std::string& name, const glm::mat4& matrix)
+{
+	glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
 Shader::~Shader()
 {
 	deleteData();
@@ -51,11 +57,7 @@ std::string Shader::getShaderSource(const std::string& sourceFilename)
 	std::fstream inFile;
 	inFile.open(sourceFilename);
 	if(!inFile.is_open())
-	{
-		//std::string errorMessage = "failed to open shader source file: " + sourceFilename;
-		//assert(false, errorMessage.c_str());
 		LOG_CRITICAL("failed to open shader source file: {}", sourceFilename);
-	}
 
 	std::stringstream buffer;
 	buffer << inFile.rdbuf();
@@ -108,7 +110,7 @@ GLint Shader::getUniformLocation(const std::string& name)
 
 	GLint uniformLocation = glGetUniformLocation(m_programID, name.c_str());
 	m_uniformLocations[name] = uniformLocation;
-	if(uniformLocation == 1)
+	if(uniformLocation == -1)
 		LOG_WARN("uniform: {}, is invalid", name);
 
 

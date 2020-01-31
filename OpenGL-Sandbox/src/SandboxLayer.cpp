@@ -1,9 +1,9 @@
 #include "SandboxLayer.h"
 
 #include<GLCore/Util/OpenGLDebug.h>
-#include<imgui.h>
-
-#include<stb_image/stb_image.h>
+#include<glad/glad.h>
+#include<glm/glm.hpp>
+#include<glm/gtc/matrix_transform.hpp>
 
 using namespace GLCore;
 
@@ -59,12 +59,14 @@ void SandboxLayer::OnEvent(Event& event)
 
 void SandboxLayer::OnUpdate(Timestep ts)
 {
+	glm::mat4 transform = glm::translate(glm::mat4(1), {0.5f, 0.5f, 0.f});
+
+
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	m_shader.bind();
-	m_shader.loadUniform("u_color", m_uniformColor.x, m_uniformColor.y, m_uniformColor.z);
-
+	m_shader.loadUniformMatrix("u_transform", transform);
 	m_texture.bind();
 
 	glDrawElements(GL_TRIANGLES, m_va.getNumberIndicies(), GL_UNSIGNED_INT, nullptr);
@@ -72,9 +74,4 @@ void SandboxLayer::OnUpdate(Timestep ts)
 
 void SandboxLayer::OnImGuiRender()
 {
-	ImGui::Begin("test");
-
-	ImGui::ColorEdit3("clear color", (float*)&m_uniformColor);
-
-	ImGui::End();
 }
