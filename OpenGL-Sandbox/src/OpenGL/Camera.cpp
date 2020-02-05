@@ -1,15 +1,70 @@
 #include "Camera.h"
 
 #include<glm/gtc/matrix_transform.hpp>
+#include<glfw/include/GLFW/glfw3.h>
+#include<GLCore/Core/Application.h>
+#include<GLCore/Core/Input.h>
+
 
 void Camera::update(GLCore::Timestep ts)
 {
 	position += velocity * ts.GetSeconds();
-
+	velocity *= 0.95f;
 }
 
 void Camera::input()
 {
+	float speed = 0.5f;
+	if(GLCore::Input::IsKeyPressed(GLFW_KEY_W))
+	{
+		velocity.z -= speed * glm::sin(glm::radians(rotation.x + 90));
+		velocity.x -= speed * glm::cos(glm::radians(rotation.x + 90));
+	}
+	if(GLCore::Input::IsKeyPressed(GLFW_KEY_A))
+	{
+		velocity.z -= speed * glm::sin(glm::radians(rotation.x));
+		velocity.x -= speed * glm::cos(glm::radians(rotation.x));
+	}
+	if(GLCore::Input::IsKeyPressed(GLFW_KEY_S))
+	{
+		velocity.z += speed * glm::sin(glm::radians(rotation.x + 90));
+		velocity.x += speed * glm::cos(glm::radians(rotation.x + 90));
+	}
+	if(GLCore::Input::IsKeyPressed(GLFW_KEY_D))
+	{
+		velocity.z += speed * glm::sin(glm::radians(rotation.x));
+		velocity.x += speed * glm::cos(glm::radians(rotation.x));
+	}
+
+	if(GLCore::Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT) || GLCore::Input::IsKeyPressed(GLFW_KEY_LEFT_CONTROL))
+	{
+		velocity.y -= speed;
+	}
+	if(GLCore::Input::IsKeyPressed(GLFW_KEY_SPACE))
+	{
+		velocity.y += speed;
+	}
+
+	auto& window = GLCore::Application::Get().GetWindow();
+
+	static glm::vec2 lastMousePos(window.GetWidth() / 2.f, window.GetHeight() / 2.f);
+	glm::vec2 mousePos(GLCore::Input::GetMouseX(), GLCore::Input::GetMouseY());
+
+	glm::vec2 delta;
+	delta.x = mousePos.x - lastMousePos.x;
+	delta.y = lastMousePos.y - mousePos.y;
+
+	delta *= 0.1f;
+
+	rotation.x += delta.x;
+	rotation.y -= delta.y;
+
+	lastMousePos = {GLCore::Input::GetMouseX(), GLCore::Input::GetMouseY()};
+
+	if(rotation.y < -90.f)
+		rotation.y = -90.f;
+	if(rotation.y > 90.f)
+		rotation.y = 90.f;
 }
 
 void Camera::setProjectionMatrix(float fov, float aspectRatio)
@@ -19,9 +74,9 @@ void Camera::setProjectionMatrix(float fov, float aspectRatio)
 
 glm::mat4 Camera::getProjectionViewMatrix() const
 {
-	glm::mat4 view(1.f);
-	view = glm::rotate(view, rotation.x, {0.f, 1.f, 0.f});
-	view = glm::rotate(view, rotation.y, {1.f, 0.f, 0.f});
+	glm::mat4 view(1.0f);
+	view = glm::rotate(view, glm::radians(rotation.y), {1.f, 0.f, 0.f});
+	view = glm::rotate(view, glm::radians(rotation.x), {0.f, 1.f, 0.f});
 	view = glm::translate(view, -position);
 
 	return m_projectionMatrix * view;

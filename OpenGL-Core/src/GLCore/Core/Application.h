@@ -26,6 +26,8 @@ namespace GLCore {
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
+		void close() { m_Running = false; }
+
 		inline Window& GetWindow() { return *m_Window; }
 
 		inline static Application& Get() { return *s_Instance; }
