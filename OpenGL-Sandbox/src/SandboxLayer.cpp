@@ -22,10 +22,10 @@ void SandboxLayer::OnAttach()
 
 	std::vector<float> vertices =
 	{
-	 -0.5f,  0.5f, 
-	 -0.5f, -0.5f,
-	  0.5f, -0.5f,
-	  0.5f,  0.5f
+	 -0.5f,  0.5f, 1.f,
+	 -0.5f, -0.5f, 1.f,
+	  0.5f, -0.5f, 1.f,
+	  0.5f,  0.5f, 1.f,
 	};
 
 	std::vector<float> textureCoords =
@@ -42,9 +42,14 @@ void SandboxLayer::OnAttach()
 		2, 3, 0
 	};
 
-	m_va.addAttribute("a_position", vertices, 2);
+	m_va.addAttribute("a_position", vertices, 3);
 	m_va.addAttribute("a_texCoords", textureCoords, 2);
 	m_va.addIndexBuffer(indicies);
+
+	auto& window = Application::Get().GetWindow();
+
+	float aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
+	m_camera.setProjectionMatrix(90.f, aspect);
 }
 
 void SandboxLayer::OnDetach()
@@ -59,14 +64,15 @@ void SandboxLayer::OnEvent(Event& event)
 
 void SandboxLayer::OnUpdate(Timestep ts)
 {
-	glm::mat4 transform = glm::translate(glm::mat4(1), {0.5f, 0.5f, 0.f});
+	m_camera.position.z = 3;
+	glm::mat4 model = glm::rotate(glm::mat4(1.f), glm::radians(-55.f), glm::vec3(1, 0, 0));
 
 
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
-
+	
 	m_shader.bind();
-	m_shader.loadUniformMatrix("u_transform", transform);
+	m_shader.loadUniformMatrix("u_projView", m_camera.getProjectionViewMatrix() * model);
 	m_texture.bind();
 
 	glDrawElements(GL_TRIANGLES, m_va.getNumberIndicies(), GL_UNSIGNED_INT, nullptr);
