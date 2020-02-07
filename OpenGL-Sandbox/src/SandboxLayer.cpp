@@ -11,7 +11,7 @@
 using namespace GLCore;
 
 SandboxLayer::SandboxLayer()
-	:m_shader("TextureVert", "TextureFrag"), m_texture("test.png")
+	:m_shader("TextureVert", "TextureFrag"), m_texture("grass.png")
 {
 }
 

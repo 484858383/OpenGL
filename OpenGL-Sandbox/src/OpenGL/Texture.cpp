@@ -11,7 +11,13 @@ Texture::Texture(const std::string& filename)
 	unsigned char* data = stbi_load(fullFilepath.c_str(), &m_width, &m_height, &m_numberChannels, 0);
 
 	if(!data)
-		LOG_CRITICAL("failed to load texture file: {}", fullFilepath);
+	{
+		LOG_WARN("failed to load texture file: {}", fullFilepath);
+		LOG_WARN("loading error texture instead");
+		data = stbi_load("res/textures/error.png", &m_width, &m_height, &m_numberChannels, 0);
+		if(!data)
+			LOG_CRITICAL("failed to load error texture");
+	}
 
 	glGenTextures(1, &m_textureID);
 	glBindTexture(GL_TEXTURE_2D, m_textureID);
