@@ -5,7 +5,6 @@
 
 Texture::Texture(const std::string& filename)
 {
-	stbi_set_flip_vertically_on_load(1);
 	std::string fullFilepath = "res/textures/" + filename;
 
 	unsigned char* data = stbi_load(fullFilepath.c_str(), &m_width, &m_height, &m_numberChannels, 0);

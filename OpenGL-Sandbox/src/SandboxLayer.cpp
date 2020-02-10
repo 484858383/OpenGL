@@ -8,10 +8,12 @@
 
 #include<glfw/include/GLFW/glfw3.h>
 
+#include"Game/TextureAtlas.h"
+
 using namespace GLCore;
 
 SandboxLayer::SandboxLayer()
-	:m_shader("TextureVert", "TextureFrag"), m_texture("grass.png")
+	:m_shader("TextureVert", "TextureFrag"), m_texture("atlas.png")
 {
 }
 
@@ -23,27 +25,74 @@ void SandboxLayer::OnAttach()
 {
 	Utils::EnableGLDebugging();
 	glfwSetInputMode(static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow()), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glEnable(GL_DEPTH_TEST);
 
 	std::vector<float> vertices =
 	{
-	 -0.5f,  0.5f, 1.f,
-	 -0.5f, -0.5f, 1.f,
-	  0.5f, -0.5f, 1.f,
-	  0.5f,  0.5f, 1.f,
+	//front
+	 0, 1, 1,
+	 0, 0, 1,
+	 1, 0, 1,
+	 1, 1, 1,
+	 //back
+	 1, 1, 0,
+	 1, 0, 0,
+	 0, 0, 0,
+	 0, 1, 0,
+	 //left
+	 0, 1, 0,
+	 0, 0, 0,
+	 0, 0, 1,
+	 0, 1, 1,
+	 //right
+	 1, 1, 1,
+	 1, 0, 1,
+	 1, 0, 0,
+	 1, 1, 0,
+	 //top
+	 1, 1, 1,
+	 1, 1, 0,
+	 0, 1, 0,
+	 0, 1, 1,
+	 //bottom
+	 1, 0, 1,
+	 1, 0, 0,
+	 0, 0, 0,
+	 0, 0, 1,
 	};
 
-	std::vector<float> textureCoords =
-	{
-	 0.f, 1.f,
-	 0.f, 0.f,
-	 1.f, 0.f,
-	 1.f, 1.f
-	};
+	std::vector<float> textureCoords;
+
+	auto t1 = TextureAtlas::getUVCoordinates(1, 0);
+	auto t2 = TextureAtlas::getUVCoordinates(2, 0);
+	auto t3 = TextureAtlas::getUVCoordinates(3, 0);
+
+
+	for(int i = 0; i < 4; i++)
+	textureCoords.insert(textureCoords.end(), t2.begin(), t2.end());
+
+	textureCoords.insert(textureCoords.end(), t1.begin(), t1.end());
+	textureCoords.insert(textureCoords.end(), t3.begin(), t3.end());
 
 	std::vector<unsigned> indicies =
 	{
-		0, 1, 2,
-		2, 3, 0
+	 0, 1, 2,
+	 2, 3, 0,
+	 
+	 4, 5, 6,
+	 6, 7, 4,
+	 
+	 8, 9, 10,
+	 10, 11, 8,
+	 
+	 12, 13, 14,
+	 14, 15, 12,
+	 
+	 16, 17, 18,
+	 18, 19, 16,
+	 
+	 20, 21, 22,
+	 22, 23, 20
 	};
 
 	m_va.addAttribute("a_position", vertices, 3);
@@ -74,10 +123,8 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	m_camera.input();
 	m_camera.update(ts);
 
-	//glm::mat4 model = glm::rotate(glm::mat4(1.f), glm::radians(-55.f), glm::vec3(1, 0, 0));
-
 	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	m_shader.bind();
 	m_shader.loadUniformMatrix("u_projView", m_camera.getProjectionViewMatrix());
