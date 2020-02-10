@@ -2,23 +2,23 @@
 
 #include<glm/glm.hpp>
 
+struct BlockData
+{
+	int ID = -1;
+	bool isTransparent;
+	bool isFoliage;
+	glm::ivec2 textureCoords;
+};
+
 class Block
 {
-	struct BlockData;
 public:
 	Block() = default;
 
 	const BlockData& getData() const { return m_data; }
 	int getID() const { return m_data.ID; }
-
 protected:
-	struct BlockData
-	{
-		int ID = -1;
-		bool isTransparent;
-		bool isFoliage;
-		glm::ivec2 textureCoords;
-	} m_data;
+	BlockData m_data;
 };
 
 class AirBlock : public Block
