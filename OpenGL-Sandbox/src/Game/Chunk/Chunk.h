@@ -6,7 +6,8 @@
 #include"../WorldConstants.h"
 #include"../Block/Block.h"
 #include"../Block/ChunkBlock.h"
-#include"ChunkMesh.h"
+
+#include"../../OpenGL/Buffer/VertexArray.h"
 
 class ChunkMeshBuilder;
 
@@ -32,8 +33,8 @@ public:
 	void setPosition(const glm::ivec2 pos);
 	void setPosition(int x, int z);
 
-	ChunkMesh& getMesh() { return m_mesh; }
-	unsigned getNumberIndices() { return m_mesh.getMesh().blockMesh.getNumberIndicies(); }
+	VertexArray& getVertexArray() { return m_vertexArray; }
+	unsigned getNumberIndices() { return m_vertexArray.getNumberIndicies(); }
 private:
 	int index(const glm::ivec3& pos);
 	int index(int x, int y, int z);
@@ -44,5 +45,5 @@ private:
 	std::array<ChunkBlock, WorldConstants::ChunkVolume> m_blocks;
 	glm::ivec2 m_position;
 
-	ChunkMesh m_mesh;
+	VertexArray m_vertexArray;
 };

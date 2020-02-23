@@ -1,33 +1,15 @@
 #pragma once
 
-#include"../../OpenGL/Buffer/VertexArray.h"
+#include<vector>
 
 struct Mesh
 {
-	VertexArray blockMesh;
-	VertexArray waterMesh;
-	VertexArray foliageMesh;
-};
-
-class ChunkMesh
-{
-public:
-	ChunkMesh() = default;
-	ChunkMesh(const ChunkMesh&) = delete;
-	ChunkMesh& operator=(const ChunkMesh&) = delete;
-
-	ChunkMesh(ChunkMesh&&) = default;
-	ChunkMesh& operator=(ChunkMesh&&) = default;
-
-	Mesh& getMesh() { return m_mesh; }
-
-	bool& hasBlockMesh() const { m_hasBlockMesh; }
-	bool& hasWaterMesh() const { m_hasWaterMesh; }
-	bool& hasFoliageMesh() const { m_hasFoliageMesh; }
-private:
-	Mesh m_mesh;
-
-	bool m_hasBlockMesh = false;
-	bool m_hasWaterMesh = false;
-	bool m_hasFoliageMesh = false;
+	std::vector<float> positions;
+	std::vector<float> textureCoords;
+	std::vector<unsigned> indices;
+	void clear() 
+	{
+		positions.clear(); textureCoords.clear(); indices.clear();
+		positions.shrink_to_fit(); textureCoords.shrink_to_fit(); indices.shrink_to_fit();
+	}
 };

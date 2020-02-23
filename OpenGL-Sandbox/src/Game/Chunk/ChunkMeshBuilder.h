@@ -1,9 +1,9 @@
 #pragma once
 
 #include<vector>
+#include"ChunkMesh.h"
 
 class Chunk;
-class ChunkMesh;
 class Block;
 enum class direction;
 
@@ -20,10 +20,7 @@ private:
 	void addFaceToMesh(int x, int y, int z, const Block& block, direction dir);
 private:
 	Chunk* m_chunk = nullptr;
-	ChunkMesh* m_chunkMesh = nullptr;
-	unsigned m_indexCounter = 0;
 
-	std::vector<float> m_blockMeshData;
-	std::vector<float> m_textureData;
-	std::vector<unsigned> m_indices;
+	Mesh m_mesh;
+	unsigned m_indexCounter = 0;
 };
