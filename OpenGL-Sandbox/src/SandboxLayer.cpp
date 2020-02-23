@@ -2,7 +2,6 @@
 
 #include<GLCore/Util/OpenGLDebug.h>
 #include<GLCore/Core/Input.h>
-#include<glm/gtc/matrix_transform.hpp>
 #include<glad/glad.h>
 #include<glm/glm.hpp>
 
@@ -16,7 +15,7 @@
 using namespace GLCore;
 
 SandboxLayer::SandboxLayer()
-	:m_shader("TextureVert", "TextureFrag"), m_texture("atlas.png"), m_chunk(0, 0)
+	:m_shader("TextureVert", "TextureFrag"), m_chunk(0, 0)
 {
 }
 
@@ -31,6 +30,7 @@ void SandboxLayer::OnAttach()
 	glEnable(GL_DEPTH_TEST);
 
 	BlockDatabase::get();
+	TextureAtlas::get();
 
 	auto& window = Application::Get().GetWindow();
 
@@ -66,7 +66,7 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	
 	m_shader.bind();
 	m_shader.loadUniformMatrix("u_projView", m_camera.getProjectionViewMatrix());
-	m_texture.bind();
+	TextureAtlas::bind();
 
 	glDrawElements(GL_TRIANGLES, m_chunk.getNumberIndices(), GL_UNSIGNED_INT, nullptr);
 }

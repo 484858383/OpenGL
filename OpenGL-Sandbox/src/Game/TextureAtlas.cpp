@@ -3,6 +3,7 @@
 #include<GLCore/Core/Log.h>
 
 TextureAtlas::TextureAtlas()
+	:m_texture("atlas.png")
 {
 	m_unitSize = 1.f / static_cast<float>(m_texturesPerRow);
 }
@@ -15,6 +16,11 @@ std::vector<GLfloat> TextureAtlas::getUVCoordinates(const glm::ivec2& textureAtl
 std::vector<GLfloat> TextureAtlas::getUVCoordinates(int xAtlasPos, int yAtlasPos)
 {
 	return get().getUVCoordinatesImpl(xAtlasPos, yAtlasPos);
+}
+
+void TextureAtlas::bind()
+{
+	get().bindImpl();
 }
 
 std::vector<GLfloat> TextureAtlas::getUVCoordinatesImpl(const glm::ivec2& textureAtlasPos)
@@ -41,4 +47,9 @@ std::vector<GLfloat> TextureAtlas::getUVCoordinatesImpl(const glm::ivec2& textur
 std::vector<GLfloat> TextureAtlas::getUVCoordinatesImpl(int xAtlasPos, int yAtlasPos)
 {
 	return getUVCoordinatesImpl(glm::ivec2(xAtlasPos, yAtlasPos));
+}
+
+void TextureAtlas::bindImpl() const
+{
+	m_texture.bind();
 }

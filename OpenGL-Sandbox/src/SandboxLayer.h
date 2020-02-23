@@ -21,7 +21,6 @@ public:
 	virtual void OnImGuiRender() override;
 private:
 	Shader m_shader;
-	Texture m_texture;
 	Camera m_camera;
 	Chunk m_chunk;
 };

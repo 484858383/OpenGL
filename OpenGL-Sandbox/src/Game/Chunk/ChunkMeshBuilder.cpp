@@ -117,7 +117,6 @@ void ChunkMeshBuilder::endMesh()
 	m_chunk->getVertexArray().addIndexBuffer(m_mesh.indices);
 
 	m_mesh.clear();
-
 	m_indexCounter = 0;
 	m_chunk = nullptr;
 }
