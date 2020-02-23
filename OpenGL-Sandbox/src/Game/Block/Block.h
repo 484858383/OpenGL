@@ -7,7 +7,9 @@ struct BlockData
 	int ID = -1;
 	bool isTransparent;
 	bool isFoliage;
-	glm::ivec2 textureCoords;
+	glm::ivec2 topTextureCoords;
+	glm::ivec2 bottomTextureCoords;
+	glm::ivec2 sideTextureCoords;
 };
 
 class Block
@@ -29,7 +31,9 @@ public:
 		m_data.ID = 0;
 		m_data.isFoliage = false;
 		m_data.isTransparent = true;
-		m_data.textureCoords = {0, 0};
+		m_data.topTextureCoords = {0, 0};
+		m_data.bottomTextureCoords = {0, 0};
+		m_data.sideTextureCoords = {0, 0};
 	}
 };
 
@@ -41,6 +45,8 @@ public:
 		m_data.ID = 1;
 		m_data.isFoliage = false;
 		m_data.isTransparent = false;
-		m_data.textureCoords = {1, 0};
+		m_data.topTextureCoords = {1, 0};
+		m_data.sideTextureCoords = {2, 0};
+		m_data.bottomTextureCoords = {3, 0};
 	}
 };

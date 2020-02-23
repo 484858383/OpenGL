@@ -18,17 +18,11 @@ public:
 
 	static const BlockData& getData(ChunkBlock block) { return get().getDataImpl(block); }
 	static const Block& getBlock(ChunkBlock block) { return get().getBlockImpl(block); }
-	static const glm::ivec2& getTextureCoords(ChunkBlock block) { return get().getTextureCoordsImpl(block); }
-	static bool blockIsTransparent(ChunkBlock block) { return get().blockIsTransparentImpl(block); }
-	static bool blockIsFoliage(ChunkBlock block) { return get().blockIsFoliageImpl(block); }
 private:
 	BlockDatabase();
 
 	const BlockData& getDataImpl(ChunkBlock block) const;
 	const Block& getBlockImpl(ChunkBlock block) const;
-	const glm::ivec2& getTextureCoordsImpl(ChunkBlock block) const;
-	bool blockIsTransparentImpl(ChunkBlock block) const;
-	bool blockIsFoliageImpl(ChunkBlock block) const;
 private:
 	std::vector<Block> m_blocks;
 };

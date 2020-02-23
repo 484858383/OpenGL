@@ -3,5 +3,6 @@
 namespace WorldConstants
 {
 	constexpr unsigned ChunkHeight = 64;
-	constexpr unsigned ChunkVolume = 16 * 16 * 64;
+	constexpr unsigned ChunkSize = 16;
+	constexpr unsigned ChunkVolume = ChunkSize * ChunkSize * ChunkHeight;
 }

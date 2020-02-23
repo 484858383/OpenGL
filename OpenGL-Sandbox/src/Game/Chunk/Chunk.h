@@ -8,10 +8,13 @@
 #include"../Block/ChunkBlock.h"
 #include"ChunkMesh.h"
 
+class ChunkMeshBuilder;
+
 class Chunk
 {
+	friend class ChunkMeshBuilder;
 public:
-	Chunk();
+	Chunk(int x, int y);
 
 	Chunk(const Chunk&) = delete;
 	Chunk& operator=(const Chunk&) = delete;
@@ -29,7 +32,8 @@ public:
 	void setPosition(const glm::ivec2 pos);
 	void setPosition(int x, int z);
 
-	const ChunkMesh& getMesh() const { return m_mesh; }
+	ChunkMesh& getMesh() { return m_mesh; }
+	unsigned getNumberIndices() { return m_mesh.getMesh().blockMesh.getNumberIndicies(); }
 private:
 	int index(const glm::ivec3& pos);
 	int index(int x, int y, int z);

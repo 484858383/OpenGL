@@ -19,7 +19,7 @@ public:
 	ChunkMesh(ChunkMesh&&) = default;
 	ChunkMesh& operator=(ChunkMesh&&) = default;
 
-	const Mesh& getMesh() const { return m_mesh; }
+	Mesh& getMesh() { return m_mesh; }
 
 	bool& hasBlockMesh() const { m_hasBlockMesh; }
 	bool& hasWaterMesh() const { m_hasWaterMesh; }

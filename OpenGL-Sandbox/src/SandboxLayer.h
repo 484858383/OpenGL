@@ -7,6 +7,8 @@
 #include"OpenGL/Texture.h"
 #include"OpenGL/Camera.h"
 
+#include"Game/Chunk/Chunk.h"
+
 class SandboxLayer : public GLCore::Layer
 {
 public:
@@ -23,4 +25,5 @@ private:
 	VertexArray m_va;
 	Texture m_texture;
 	Camera m_camera;
+	Chunk m_chunk;
 };

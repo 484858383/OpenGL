@@ -11,10 +11,12 @@
 #include"Game/TextureAtlas.h"
 #include"Game/Block/Database.h"
 
+#include"Game/Chunk/ChunkMeshBuilder.h"
+
 using namespace GLCore;
 
 SandboxLayer::SandboxLayer()
-	:m_shader("TextureVert", "TextureFrag"), m_texture("atlas.png")
+	:m_shader("TextureVert", "TextureFrag"), m_texture("atlas.png"), m_chunk(0, 0)
 {
 }
 
@@ -27,6 +29,8 @@ void SandboxLayer::OnAttach()
 	Utils::EnableGLDebugging();
 	glfwSetInputMode(static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow()), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glEnable(GL_DEPTH_TEST);
+
+	BlockDatabase::get();
 
 	std::vector<float> vertices =
 	{
@@ -106,6 +110,11 @@ void SandboxLayer::OnAttach()
 	m_camera.setProjectionMatrix(90.f, aspect);
 
 	m_camera.position.z = 3;
+
+	ChunkMeshBuilder builder;
+	builder.beginMesh(m_chunk);
+	builder.buildMesh();
+	builder.endMesh();
 }
 
 void SandboxLayer::OnDetach()
@@ -131,7 +140,7 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	m_shader.loadUniformMatrix("u_projView", m_camera.getProjectionViewMatrix());
 	m_texture.bind();
 
-	glDrawElements(GL_TRIANGLES, m_va.getNumberIndicies(), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, m_chunk.getNumberIndices(), GL_UNSIGNED_INT, nullptr);
 }
 
 void SandboxLayer::OnImGuiRender()

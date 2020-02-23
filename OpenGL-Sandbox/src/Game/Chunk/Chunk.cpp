@@ -2,9 +2,10 @@
 
 #include"../Block/Database.h"
 
-Chunk::Chunk()
+Chunk::Chunk(int x, int y)
+	:m_position(x, y)
 {
-	m_blocks.fill(ChunkBlock::air);
+	m_blocks.fill(ChunkBlock::grass);
 }
 
 const Block& Chunk::getBlock(const glm::ivec3& pos)
@@ -55,7 +56,7 @@ int Chunk::index(const glm::ivec3& pos)
 
 int Chunk::index(int x, int y, int z)
 {
-	return y * (16 * 16) + z * 16 + x;
+	return y * (WorldConstants::ChunkSize * WorldConstants::ChunkSize) + z * WorldConstants::ChunkSize + x;
 }
 
 bool Chunk::outOfBounds(const glm::ivec3& pos)
@@ -65,6 +66,7 @@ bool Chunk::outOfBounds(const glm::ivec3& pos)
 
 bool Chunk::outOfBounds(int x, int y, int z)
 {
+	int max = WorldConstants::ChunkSize - 1;
 	return x < 0 || y < 0 || z < 0
-		|| x > 15 || z > 15 || y > WorldConstants::ChunkHeight - 1;
+		|| x > max || z > max || y > WorldConstants::ChunkHeight - 1;
 }
