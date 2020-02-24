@@ -49,22 +49,22 @@ void Chunk::setPosition(int x, int z)
 	m_position = glm::ivec2(x, z);
 }
 
-int Chunk::index(const glm::ivec3& pos)
+int Chunk::index(const glm::ivec3& pos) const
 {
 	return index(pos.x, pos.y, pos.z);
 }
 
-int Chunk::index(int x, int y, int z)
+int Chunk::index(int x, int y, int z) const
 {
 	return y * (WorldConstants::ChunkSize * WorldConstants::ChunkSize) + z * WorldConstants::ChunkSize + x;
 }
 
-bool Chunk::outOfBounds(const glm::ivec3& pos)
+bool Chunk::outOfBounds(const glm::ivec3& pos) const
 {
 	return outOfBounds(pos.x, pos.y, pos.z);
 }
 
-bool Chunk::outOfBounds(int x, int y, int z)
+bool Chunk::outOfBounds(int x, int y, int z) const
 {
 	int max = WorldConstants::ChunkSize - 1;
 	return x < 0 || y < 0 || z < 0

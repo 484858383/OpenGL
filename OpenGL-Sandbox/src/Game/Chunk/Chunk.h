@@ -36,11 +36,11 @@ public:
 	const VertexArray& getVertexArray() const { return m_vertexArray; }
 	unsigned getNumberIndices() const { return m_vertexArray.getNumberIndicies(); }
 private:
-	int index(const glm::ivec3& pos);
-	int index(int x, int y, int z);
+	int index(const glm::ivec3& pos) const;
+	int index(int x, int y, int z) const;
 
-	bool outOfBounds(const glm::ivec3& pos);
-	bool outOfBounds(int x, int y, int z);
+	bool outOfBounds(const glm::ivec3& pos) const;
+	bool outOfBounds(int x, int y, int z) const;
 private:
 	std::array<ChunkBlock, WorldConstants::ChunkVolume> m_blocks;
 	glm::ivec2 m_position;

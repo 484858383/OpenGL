@@ -32,7 +32,6 @@ void SandboxLayer::OnAttach()
 	TextureAtlas::get();
 	Renderer::init(m_camera);
 
-
 	ChunkMeshBuilder builder;
 	builder.beginMesh(m_chunk);
 	builder.buildMesh();
@@ -55,9 +54,10 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	m_camera.input();
 	m_camera.update(ts);
 
+	Renderer::clear();
+
 	Renderer::addChunkToQueue(m_chunk);
 
-	Renderer::clear();
 	Renderer::update();
 }
 
