@@ -56,7 +56,7 @@ void SandboxLayer::OnUpdate(Timestep ts)
 
 	Renderer::clear();
 
-	Renderer::addChunkToQueue(m_chunk);
+	m_world.batchChunks();
 
 	Renderer::update();
 }

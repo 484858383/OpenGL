@@ -5,7 +5,15 @@
 Chunk::Chunk(int x, int y)
 	:m_position(x, y)
 {
-	m_blocks.fill(ChunkBlock::grass);
+	for(int y = 0; y < WorldConstants::ChunkHeight; y++)
+	for(int x = 0; x < WorldConstants::ChunkSize; x++)
+	for(int z = 0; z < WorldConstants::ChunkSize; z++)
+	{
+		if(y < WorldConstants::GrassLevel)
+			setBlock(x, y, z, ChunkBlock::grass);
+		else
+			setBlock(x, y, z, ChunkBlock::air);
+	}
 }
 
 const Block& Chunk::getBlock(const glm::ivec3& pos) const
