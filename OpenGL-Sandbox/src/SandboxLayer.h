@@ -3,7 +3,6 @@
 #include<GLCore/Core/Application.h>
 
 #include"OpenGL/Camera.h"
-#include"Game/Chunk/Chunk.h"
 #include"Game/World.h"
 
 class SandboxLayer : public GLCore::Layer
@@ -19,6 +18,5 @@ public:
 	virtual void OnImGuiRender() override;
 private:
 	Camera m_camera;
-	Chunk m_chunk;
 	World m_world;
 };

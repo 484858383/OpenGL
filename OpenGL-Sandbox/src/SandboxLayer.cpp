@@ -16,7 +16,6 @@
 using namespace GLCore;
 
 SandboxLayer::SandboxLayer()
-	:m_chunk(0, 0)
 {
 }
 
@@ -31,11 +30,6 @@ void SandboxLayer::OnAttach()
 	BlockDatabase::get();
 	TextureAtlas::get();
 	Renderer::init(m_camera);
-
-	ChunkMeshBuilder builder;
-	builder.beginMesh(m_chunk);
-	builder.buildMesh();
-	builder.endMesh();
 }
 
 void SandboxLayer::OnDetach()
