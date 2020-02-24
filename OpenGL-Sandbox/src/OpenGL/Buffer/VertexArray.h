@@ -3,6 +3,8 @@
 #include<glad/glad.h>
 #include<vector>
 
+struct Mesh;
+
 class VertexArray
 {
 public:
@@ -20,6 +22,7 @@ public:
 	///attributeName is the name you use in the shader, e.g. "a_position"
 	///data is the vertex data
 	///size is the number of componets in the vector, e.g. vec3 means size = 3
+	void addAttributes(const Mesh& mesh);
 
 	void addIndexBuffer(const std::vector<unsigned>& indices);
 	void showLayout() const;

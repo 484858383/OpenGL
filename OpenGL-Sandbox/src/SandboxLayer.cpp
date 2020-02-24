@@ -9,13 +9,14 @@
 
 #include"Game/TextureAtlas.h"
 #include"Game/Block/Database.h"
+#include"Game/Renderer/Renderer.h"
 
 #include"Game/Chunk/ChunkMeshBuilder.h"
 
 using namespace GLCore;
 
 SandboxLayer::SandboxLayer()
-	:m_shader("TextureVert", "TextureFrag"), m_chunk(0, 0)
+	:m_chunk(0, 0)
 {
 }
 
@@ -26,18 +27,11 @@ SandboxLayer::~SandboxLayer()
 void SandboxLayer::OnAttach()
 {
 	Utils::EnableGLDebugging();
-	glfwSetInputMode(static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow()), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glEnable(GL_DEPTH_TEST);
 
 	BlockDatabase::get();
 	TextureAtlas::get();
+	Renderer::init(m_camera);
 
-	auto& window = Application::Get().GetWindow();
-
-	float aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
-	m_camera.setProjectionMatrix(90.f, aspect);
-
-	m_camera.position.z = 3;
 
 	ChunkMeshBuilder builder;
 	builder.beginMesh(m_chunk);
@@ -61,14 +55,10 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	m_camera.input();
 	m_camera.update(ts);
 
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	m_shader.bind();
-	m_shader.loadUniformMatrix("u_projView", m_camera.getProjectionViewMatrix());
-	TextureAtlas::bind();
+	Renderer::addChunkToQueue(m_chunk);
 
-	glDrawElements(GL_TRIANGLES, m_chunk.getNumberIndices(), GL_UNSIGNED_INT, nullptr);
+	Renderer::clear();
+	Renderer::update();
 }
 
 void SandboxLayer::OnImGuiRender()

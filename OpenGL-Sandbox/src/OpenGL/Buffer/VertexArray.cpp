@@ -1,6 +1,7 @@
 #include "VertexArray.h"
 
 #include<GLCore/Core/Log.h>
+#include"../Mesh.h"
 
 VertexArray::VertexArray()
 {
@@ -48,6 +49,8 @@ VertexArray::~VertexArray()
 
 void VertexArray::addAttribute(const std::string& attributeName, const std::vector<float>& data, int size)
 {
+	if(data.empty())
+		LOG_CRITICAL("trying to fill vertex buffer with no data, attribute: {}", attributeName);
 	m_layout.push_back(std::make_pair(attributeName, size));
 
 	glBindVertexArray(m_ID);
@@ -61,6 +64,14 @@ void VertexArray::addAttribute(const std::string& attributeName, const std::vect
 	glEnableVertexArrayAttrib(m_ID, m_indexCounter++);
 
 	m_buffers.push_back(vbo);
+}
+
+void VertexArray::addAttributes(const Mesh& mesh)
+{
+	addAttribute("a_position", mesh.positions, 3);
+	addAttribute("a_texCoords", mesh.textureCoords, 2);
+
+	addIndexBuffer(mesh.indices);
 }
 
 void VertexArray::addIndexBuffer(const std::vector<unsigned>& indices)

@@ -112,9 +112,7 @@ void ChunkMeshBuilder::buildMesh()
 
 void ChunkMeshBuilder::endMesh()
 {
-	m_chunk->getVertexArray().addAttribute("a_position", m_mesh.positions, 3);
-	m_chunk->getVertexArray().addAttribute("a_texCoords", m_mesh.textureCoords, 2);
-	m_chunk->getVertexArray().addIndexBuffer(m_mesh.indices);
+	m_chunk->m_vertexArray.addAttributes(m_mesh);
 
 	m_mesh.clear();
 	m_indexCounter = 0;
@@ -183,9 +181,9 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 	vertexTextureCoords.insert(vertexTextureCoords.end(), texCoordData.begin(), texCoordData.end());
 
 	m_mesh.indices.insert(m_mesh.indices.end(),
-					 {
-						 m_indexCounter, m_indexCounter + 1, m_indexCounter + 2,
-						 m_indexCounter + 2, m_indexCounter + 3, m_indexCounter,
-					 });
+	{
+		m_indexCounter, m_indexCounter + 1, m_indexCounter + 2,
+		m_indexCounter + 2, m_indexCounter + 3, m_indexCounter,
+	});
 	m_indexCounter += 4;
 }

@@ -23,18 +23,18 @@ public:
 	Chunk(Chunk&&) = default;
 	Chunk& operator=(Chunk&&) = default;
 
-	const Block& getBlock(const glm::ivec3& pos);
-	const Block& getBlock(int x, int y, int z);
+	const Block& getBlock(const glm::ivec3& pos) const;
+	const Block& getBlock(int x, int y, int z) const;
 
 	void setBlock(const glm::ivec3& pos, ChunkBlock block);
 	void setBlock(int x, int y, int z, ChunkBlock block);
 
-	const glm::ivec2& getPosition();
+	const glm::ivec2& getPosition() const;
 	void setPosition(const glm::ivec2 pos);
 	void setPosition(int x, int z);
 
-	VertexArray& getVertexArray() { return m_vertexArray; }
-	unsigned getNumberIndices() { return m_vertexArray.getNumberIndicies(); }
+	const VertexArray& getVertexArray() const { return m_vertexArray; }
+	unsigned getNumberIndices() const { return m_vertexArray.getNumberIndicies(); }
 private:
 	int index(const glm::ivec3& pos);
 	int index(int x, int y, int z);

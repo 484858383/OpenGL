@@ -8,12 +8,12 @@ Chunk::Chunk(int x, int y)
 	m_blocks.fill(ChunkBlock::grass);
 }
 
-const Block& Chunk::getBlock(const glm::ivec3& pos)
+const Block& Chunk::getBlock(const glm::ivec3& pos) const
 {
 	return getBlock(pos.x, pos.y, pos.z);
 }
 
-const Block& Chunk::getBlock(int x, int y, int z)
+const Block& Chunk::getBlock(int x, int y, int z) const
 {
 	if(outOfBounds(x, y, z))
 		return BlockDatabase::getBlock(ChunkBlock::air);
@@ -34,7 +34,7 @@ void Chunk::setBlock(int x, int y, int z, ChunkBlock block)
 	 m_blocks[index(x, y, z)] = block;
 }
 
-const glm::ivec2& Chunk::getPosition()
+const glm::ivec2& Chunk::getPosition() const
 {
 	return m_position;
 }
