@@ -32,6 +32,8 @@ private:
 	bool chunkExistsAt(const glm::ivec2& position) const;
 	glm::ivec2 getChunkPosition(const glm::ivec3& pos) const;
 	glm::ivec2 getChunkPosition(int x, int z) const;
+	glm::ivec3 getBlockPosition(const glm::ivec3& position) const;
+	glm::ivec3 getBlockPosition(int x, int y, int z) const;
 	void addChunk(int x, int z);
 private:
 	ChunkMeshBuilder m_chunkBuilder;

@@ -10,6 +10,7 @@
 #include"../../OpenGL/Buffer/VertexArray.h"
 
 class ChunkMeshBuilder;
+class World;
 
 class Chunk
 {

@@ -3,6 +3,7 @@
 #include"Chunk.h"
 #include"ChunkMesh.h"
 #include"../TextureAtlas.h"
+#include"../World.h"
 
 #include<GLCore/Core/Log.h>
 
@@ -50,6 +51,13 @@ namespace
 		0, 0, 0,
 		0, 0, 1,
 	};
+
+	glm::ivec3 front = { 0,  0,  1};
+	glm::ivec3 back =  { 0,  0, -1};
+	glm::ivec3 left =  {-1,  0,  0};
+	glm::ivec3 right = { 1,  0,  0};
+	glm::ivec3 up =    { 0,  1,  0};
+	glm::ivec3 down =  { 0, -1,  0};
 }
 
 enum class direction : int
@@ -60,52 +68,56 @@ enum class direction : int
 };
 
 
-void ChunkMeshBuilder::beginMesh(Chunk& chunk)
+void ChunkMeshBuilder::beginMesh(Chunk& chunk, World& world)
 {
 	m_chunk = &chunk;
+	m_world = &world;
 }
 
 void ChunkMeshBuilder::buildMesh()
 {
-	assert(m_chunk, "could not build chunk mesh");
+	assert(m_chunk && m_world, "could not build chunk mesh, world or chunk ptr is null");
 
 	for(int y = 0; y < WorldConstants::ChunkHeight; y++)
 	for(int x = 0; x < WorldConstants::ChunkSize; x++)
 	for(int z = 0; z < WorldConstants::ChunkSize; z++)
 	{
 		glm::ivec3 position = {x, y, z};
-		auto block = m_chunk->getBlock(position);
+		auto& block = m_chunk->getBlock(position);
 		if(block.getData().isTransparent)
 			continue;
 
-		if(m_chunk->getBlock(x + 1, y, z).getData().isTransparent)
+		glm::ivec3 worldPosition = position + glm::ivec3(WorldConstants::ChunkSize * m_chunk->getPosition().x, 0,																   WorldConstants::ChunkSize * m_chunk->getPosition().y);
+
+
+		if(m_world->getBlock(worldPosition + right).getData().isTransparent)
 		{
-			addFaceToMesh(x, y, z, m_chunk->getBlock(x, y, z), direction::right);
+			addFaceToMesh(x, y, z, block, direction::right);
 		}
 
-		if(m_chunk->getBlock(x - 1, y, z).getData().isTransparent)
+		if(m_world->getBlock(worldPosition + left).getData().isTransparent)
 		{
-			addFaceToMesh(x, y, z, m_chunk->getBlock(x, y, z), direction::left);
+			addFaceToMesh(x, y, z, block, direction::left);
 		}
 
-		if(m_chunk->getBlock(x, y + 1, z).getData().isTransparent)
+		if(m_world->getBlock(worldPosition + up).getData().isTransparent)
 		{
-			addFaceToMesh(x, y, z, m_chunk->getBlock(x, y, z), direction::top);
+			addFaceToMesh(x, y, z, block, direction::top);
 		}
 
-		if(m_chunk->getBlock(x, y - 1, z).getData().isTransparent)
+		if(m_world->getBlock(worldPosition + down).getData().isTransparent)
 		{
-			addFaceToMesh(x, y, z, m_chunk->getBlock(x, y, z), direction::bottom);
+			addFaceToMesh(x, y, z, block, direction::bottom);
 		}
 
-		if(m_chunk->getBlock(x, y, z + 1).getData().isTransparent)
+		if(m_world->getBlock(worldPosition + front).getData().isTransparent)
 		{
-			addFaceToMesh(x, y, z, m_chunk->getBlock(x, y, z), direction::front);
+			addFaceToMesh(x, y, z, block, direction::front);
 		}
 
-		if(m_chunk->getBlock(x, y, z - 1).getData().isTransparent)
+		if(m_world->getBlock(worldPosition + back).getData().isTransparent)
 		{
-			addFaceToMesh(x, y, z, m_chunk->getBlock(x, y, z), direction::back);
+			addFaceToMesh(x, y, z, block, direction::back);
 		}
 	}
 }
@@ -173,7 +185,7 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 
 	for(int i = 0; i < 12; i += 3)
 	{
-		vertexPositions.emplace_back(faceData[i] + x + m_chunk->getPosition().x * WorldConstants::ChunkSize);
+		vertexPositions.emplace_back(faceData[i]     + x + m_chunk->getPosition().x * WorldConstants::ChunkSize);
 		vertexPositions.emplace_back(faceData[i + 1] + y);
 		vertexPositions.emplace_back(faceData[i + 2] + z + m_chunk->getPosition().y * WorldConstants::ChunkSize);
 	}
