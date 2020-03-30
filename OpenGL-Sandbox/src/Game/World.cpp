@@ -5,8 +5,8 @@
 
 World::World()
 {
-	for(int x = 0; x < 4; x++)
-	for(int z = 0; z < 4; z++)
+	for(int x = 0; x < 2; x++)
+	for(int z = 0; z < 2; z++)
 	{
 		addChunk(x, z);
 	}
@@ -42,6 +42,7 @@ void World::setBlock(const glm::ivec3& position, ChunkBlock block)
 
 	auto blockPos = getBlockPosition(position);
 	m_chunks.at(chunkPos).setBlock(blockPos, block);
+	m_chunksToBuild.push_back(&m_chunks.at(chunkPos));
 }
 
 void World::setBlock(int x, int y, int z, ChunkBlock block)
@@ -51,7 +52,14 @@ void World::setBlock(int x, int y, int z, ChunkBlock block)
 
 void World::update()
 {
+	for(auto chunk : m_chunksToBuild)
+	{
+		m_chunkBuilder.beginMesh(*chunk, *this);
+		m_chunkBuilder.buildMesh();
+		m_chunkBuilder.endMesh();
+	}
 
+	m_chunksToBuild.clear();
 }
 
 void World::batchChunks()

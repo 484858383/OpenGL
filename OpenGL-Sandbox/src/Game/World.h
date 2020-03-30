@@ -38,4 +38,5 @@ private:
 private:
 	ChunkMeshBuilder m_chunkBuilder;
 	std::unordered_map<glm::ivec2, Chunk> m_chunks;
+	std::vector<Chunk*> m_chunksToBuild;
 };

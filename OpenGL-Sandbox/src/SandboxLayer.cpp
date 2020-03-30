@@ -4,6 +4,7 @@
 #include<GLCore/Core/Input.h>
 #include<glad/glad.h>
 #include<glm/glm.hpp>
+#include<chrono>
 
 #include<glfw/include/GLFW/glfw3.h>
 
@@ -52,6 +53,27 @@ void SandboxLayer::OnUpdate(Timestep ts)
 
 	m_world.batchChunks();
 
+	auto lookAt = m_camera.lookAt();
+	auto current = m_camera.position;
+
+	if(GLCore::Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1))
+	{
+		glm::vec3 position = m_camera.position;
+		glm::vec3 lookAt = m_camera.lookAt();
+		for(int i = 0; i < 50; i++)
+		{
+			position += 1.f * lookAt;
+			if(m_world.getBlock(position.x, position.y, position.z) != ChunkBlock::air)
+			{
+				m_world.setBlock(position.x, position.y, position.z, ChunkBlock::air);
+				break;
+				///vertex array replacement
+			}
+		}
+		//m_world.setBlock(0, y++, 0, ChunkBlock::air);
+	}
+
+	m_world.update();
 	Renderer::update();
 }
 

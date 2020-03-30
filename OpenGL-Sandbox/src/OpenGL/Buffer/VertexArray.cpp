@@ -68,6 +68,9 @@ void VertexArray::addAttribute(const std::string& attributeName, const std::vect
 
 void VertexArray::addAttributes(const Mesh& mesh)
 {
+	deleteData();
+	glGenVertexArrays(1, &m_ID);
+
 	addAttribute("a_position", mesh.positions, 3);
 	addAttribute("a_texCoords", mesh.textureCoords, 2);
 

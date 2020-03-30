@@ -81,3 +81,14 @@ glm::mat4 Camera::getProjectionViewMatrix() const
 
 	return m_projectionMatrix * view;
 }
+
+glm::vec3 Camera::lookAt()
+{
+	glm::vec3 lookAt = glm::vec3(1.f);
+
+	lookAt.x = glm::sin(glm::radians(rotation.x));
+	lookAt.y = -glm::sin(glm::radians(rotation.y));
+	lookAt.z = -glm::cos(glm::radians(rotation.x));
+
+	return {lookAt.x, lookAt.y, lookAt.z};
+}
