@@ -84,11 +84,12 @@ glm::mat4 Camera::getProjectionViewMatrix() const
 
 glm::vec3 Camera::lookAt()
 {
-	glm::vec3 lookAt = glm::vec3(1.f);
+	glm::mat4 view(1.0f);
+	view = glm::rotate(view, glm::radians(rotation.y), {1.f, 0.f, 0.f});
+	view = glm::rotate(view, glm::radians(rotation.x), {0.f, 1.f, 0.f});
+	view = glm::translate(view, -position);
 
-	lookAt.x = glm::sin(glm::radians(rotation.x));
-	lookAt.y = -glm::sin(glm::radians(rotation.y));
-	lookAt.z = -glm::cos(glm::radians(rotation.x));
+	view = glm::inverse(view);
 
-	return {lookAt.x, lookAt.y, lookAt.z};
+	return -normalize(glm::vec3(view[2]));
 }

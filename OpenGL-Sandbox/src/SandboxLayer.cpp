@@ -43,9 +43,11 @@ void SandboxLayer::OnEvent(Event& event)
 	if(Input::IsKeyPressed(GLFW_KEY_ESCAPE) && Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT))
 		Application::Get().close();
 }
-
+#include"Clock.h"
 void SandboxLayer::OnUpdate(Timestep ts)
 {
+	static Clock c;
+
 	m_camera.input();
 	m_camera.update(ts);
 
@@ -56,8 +58,9 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	auto lookAt = m_camera.lookAt();
 	auto current = m_camera.position;
 
-	if(GLCore::Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1))
+	if(GLCore::Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1) && c.getSeconds() > 0.3f)
 	{
+		c.reset();
 		glm::vec3 position = m_camera.position;
 		glm::vec3 lookAt = m_camera.lookAt();
 		for(int i = 0; i < 50; i++)
@@ -70,7 +73,6 @@ void SandboxLayer::OnUpdate(Timestep ts)
 				///vertex array replacement
 			}
 		}
-		//m_world.setBlock(0, y++, 0, ChunkBlock::air);
 	}
 
 	m_world.update();
