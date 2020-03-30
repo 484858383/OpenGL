@@ -14,6 +14,8 @@
 
 #include"Game/Chunk/ChunkMeshBuilder.h"
 
+#include"Game/Physics/Ray.h"
+
 using namespace GLCore;
 
 SandboxLayer::SandboxLayer()
@@ -58,20 +60,27 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	auto lookAt = m_camera.lookAt();
 	auto current = m_camera.position;
 
-	if(GLCore::Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1) && c.getSeconds() > 0.3f)
+	if((Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1) 
+	||  Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_2)) && c.getSeconds() > 0.3f)
 	{
 		c.reset();
-		glm::vec3 position = m_camera.position;
-		glm::vec3 lookAt = m_camera.lookAt();
-		for(int i = 0; i < 50; i++)
+		Ray ray(m_camera);
+		glm::vec3 lastPosition;
+
+		while(ray.length() <= 5.f)
 		{
-			position += 1.f * lookAt;
+			glm::ivec3 position(ray.getPosition().x, ray.getPosition().y, ray.getPosition().z);
+
 			if(m_world.getBlock(position.x, position.y, position.z) != ChunkBlock::air)
 			{
-				m_world.setBlock(position.x, position.y, position.z, ChunkBlock::air);
-				break;
-				///vertex array replacement
+				if(Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1))
+					m_world.setBlock(position.x, position.y, position.z, ChunkBlock::air);
+				else
+					m_world.setBlock(lastPosition.x, lastPosition.y, lastPosition.z, ChunkBlock::grass);
+					break;
 			}
+			ray.step(0.1f);
+			lastPosition = position;
 		}
 	}
 
