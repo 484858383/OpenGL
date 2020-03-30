@@ -2,6 +2,7 @@
 
 #include<vector>
 #include"ChunkMesh.h"
+#include"../../Clock.h"
 
 class Chunk;
 class Block;
@@ -25,4 +26,5 @@ private:
 
 	Mesh m_mesh;
 	unsigned m_indexCounter = 0;
+	Clock m_clock;
 };

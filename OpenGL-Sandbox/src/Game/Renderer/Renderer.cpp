@@ -42,7 +42,7 @@ void Renderer::updateImpl()
 		chunk->getVertexArray().bind();
 		glDrawElements(GL_TRIANGLES, chunk->getNumberIndices(), GL_UNSIGNED_INT, nullptr);
 	}
-
+	m_chunks.clear();
 }
 
 void Renderer::initImpl(Camera& camera)

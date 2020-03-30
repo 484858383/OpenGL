@@ -7,6 +7,8 @@
 
 #include<GLCore/Core/Log.h>
 
+#define SHOW_TIME 0
+
 namespace
 {
 	std::vector<float> frontFace =
@@ -72,6 +74,9 @@ void ChunkMeshBuilder::beginMesh(Chunk& chunk, World& world)
 {
 	m_chunk = &chunk;
 	m_world = &world;
+#if SHOW_TIME
+	m_clock.reset();
+#endif
 }
 
 void ChunkMeshBuilder::buildMesh()
@@ -120,6 +125,7 @@ void ChunkMeshBuilder::buildMesh()
 			addFaceToMesh(x, y, z, block, direction::back);
 		}
 	}
+	
 }
 
 void ChunkMeshBuilder::endMesh()
@@ -129,6 +135,9 @@ void ChunkMeshBuilder::endMesh()
 	m_mesh.clear();
 	m_indexCounter = 0;
 	m_chunk = nullptr;
+#if SHOW_TIME
+	LOG_INFO("time taken to build chunk: {}ms", m_clock.getMilliseconds());
+#endif
 }
 
 void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, direction dir)

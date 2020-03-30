@@ -15,6 +15,7 @@
 #include"Game/Chunk/ChunkMeshBuilder.h"
 
 #include"Game/Physics/Ray.h"
+#include"Clock.h"
 
 using namespace GLCore;
 
@@ -45,7 +46,7 @@ void SandboxLayer::OnEvent(Event& event)
 	if(Input::IsKeyPressed(GLFW_KEY_ESCAPE) && Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT))
 		Application::Get().close();
 }
-#include"Clock.h"
+
 void SandboxLayer::OnUpdate(Timestep ts)
 {
 	static Clock c;
