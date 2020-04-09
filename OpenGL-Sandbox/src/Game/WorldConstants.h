@@ -2,8 +2,8 @@
 
 namespace WorldConstants
 {
-	constexpr unsigned ChunkHeight = 64;
-	constexpr unsigned ChunkSize = 16;
-	constexpr unsigned ChunkVolume = ChunkSize * ChunkSize * ChunkHeight;
-	constexpr unsigned GrassLevel = 32;
+	constexpr int ChunkHeight = 64;
+	constexpr int ChunkSize = 16;
+	constexpr int ChunkVolume = ChunkSize * ChunkSize * ChunkHeight;
+	constexpr int GrassLevel = 32;
 }
