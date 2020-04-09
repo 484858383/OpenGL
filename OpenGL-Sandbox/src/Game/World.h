@@ -35,6 +35,8 @@ private:
 	glm::ivec3 getBlockPosition(const glm::ivec3& position) const;
 	glm::ivec3 getBlockPosition(int x, int y, int z) const;
 	void addChunk(int x, int z);
+	void prepareChunkToBuild(const glm::ivec2& chunkPosition);
+	void prepareChunkToBuild(int x, int z) { prepareChunkToBuild({x, z}); }
 private:
 	ChunkMeshBuilder m_chunkBuilder;
 	std::unordered_map<glm::ivec2, Chunk> m_chunks;

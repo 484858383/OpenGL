@@ -43,6 +43,15 @@ void World::setBlock(const glm::ivec3& position, ChunkBlock block)
 	auto blockPos = getBlockPosition(position);
 	m_chunks.at(chunkPos).setBlock(blockPos, block);
 	m_chunksToBuild.push_back(&m_chunks.at(chunkPos));
+
+	if(blockPos.x == 0)
+		prepareChunkToBuild(chunkPos.x - 1, chunkPos.y);
+	if(blockPos.x == 15)
+		prepareChunkToBuild(chunkPos.x + 1, chunkPos.y);
+	if(blockPos.z == 0)
+		prepareChunkToBuild(chunkPos.x, chunkPos.y - 1);
+	if(blockPos.z == 15)
+		prepareChunkToBuild(chunkPos.x, chunkPos.y + 1);
 }
 
 void World::setBlock(int x, int y, int z, ChunkBlock block)
@@ -106,9 +115,19 @@ glm::ivec3 World::getBlockPosition(const glm::ivec3& position) const
 glm::ivec3 World::getBlockPosition(int x, int y, int z) const
 {
 	return {x % 16, y, z % 16};
+	return {(WorldConstants::ChunkSize + (x % WorldConstants::ChunkSize)) % WorldConstants::ChunkSize,
+			y,
+			(WorldConstants::ChunkSize + (z % WorldConstants::ChunkSize)) % WorldConstants::ChunkSize};
 }
 
 void World::addChunk(int x, int z)
 {
 	m_chunks.emplace(glm::ivec2(x, z), Chunk(x, z));
+}
+
+void World::prepareChunkToBuild(const glm::ivec2& chunkPosition)
+{
+	if(!chunkExistsAt(chunkPosition))
+		return;
+	m_chunksToBuild.push_back(&m_chunks.at(chunkPosition));
 }
