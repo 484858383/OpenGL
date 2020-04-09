@@ -5,6 +5,8 @@
 #include"OpenGL/Camera.h"
 #include"Game/World.h"
 
+class Clock;
+
 class SandboxLayer : public GLCore::Layer
 {
 public:
@@ -17,6 +19,12 @@ public:
 	virtual void OnUpdate(GLCore::Timestep ts) override;
 	virtual void OnImGuiRender() override;
 private:
+	void raycast(Clock& clock);
+private:
 	Camera m_camera;
 	World m_world;
+private:
+	float m_timeToBreak = 0.25f; //time between breaking blocks when holding mouse1
+	float m_rayStep = 0.1f; //the lower this value is the more accurate it will be but it will take longer
+	float m_blockBreakRange = 5.f; //unit is number of blocks
 };

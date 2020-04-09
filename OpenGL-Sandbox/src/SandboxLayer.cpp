@@ -57,17 +57,29 @@ void SandboxLayer::OnUpdate(Timestep ts)
 
 	m_world.batchChunks();
 
+	raycast(c);
+
+	m_world.update();
+	Renderer::update();
+}
+
+void SandboxLayer::OnImGuiRender()
+{
+}
+
+void SandboxLayer::raycast(Clock& clock)
+{
 	auto lookAt = m_camera.lookAt();
 	auto current = m_camera.position;
 
-	if((Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1) 
-	||  Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_2)) && c.getSeconds() > 0.3f)
+	if((Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1)
+		|| Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_2)) && clock.getSeconds() > m_timeToBreak)
 	{
-		c.reset();
+		clock.reset();
 		Ray ray(m_camera);
 		glm::vec3 lastPosition;
 
-		while(ray.length() <= 5.f)
+		while(ray.length() <= m_blockBreakRange)
 		{
 			glm::ivec3 position(ray.getPosition().x, ray.getPosition().y, ray.getPosition().z);
 
@@ -77,17 +89,10 @@ void SandboxLayer::OnUpdate(Timestep ts)
 					m_world.setBlock(position.x, position.y, position.z, ChunkBlock::air);
 				else
 					m_world.setBlock(lastPosition.x, lastPosition.y, lastPosition.z, ChunkBlock::grass);
-					break;
+				break;
 			}
-			ray.step(0.1f);
+			ray.step(m_rayStep);
 			lastPosition = position;
 		}
 	}
-
-	m_world.update();
-	Renderer::update();
-}
-
-void SandboxLayer::OnImGuiRender()
-{
 }
