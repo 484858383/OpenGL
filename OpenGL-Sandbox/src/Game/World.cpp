@@ -42,7 +42,7 @@ void World::setBlock(const glm::ivec3& position, ChunkBlock block)
 
 	auto blockPos = getBlockPosition(position);
 	m_chunks.at(chunkPos).setBlock(blockPos, block);
-	m_chunksToBuild.push_back(&m_chunks.at(chunkPos));
+	m_chunksToBuild.insert(&m_chunks.at(chunkPos));
 
 	if(blockPos.x == 0)
 		prepareChunkToBuild(chunkPos.x - 1, chunkPos.y);
@@ -59,7 +59,7 @@ void World::setBlock(int x, int y, int z, ChunkBlock block)
 	setBlock({x, y, z}, block);
 }
 
-void World::update()
+void World::update(const glm::vec3& cameraPosition)
 {
 	for(auto chunk : m_chunksToBuild)
 	{
@@ -69,6 +69,31 @@ void World::update()
 	}
 
 	m_chunksToBuild.clear();
+
+	std::vector<glm::ivec2> addedPositions;
+	//add chunks in player's radius
+	for(int x = -2; x < 2; x++)
+	for(int z = -2; z < 2; z++)
+	{
+		glm::ivec2 chunkPosition = {x + std::floor(cameraPosition.x / (float)WorldConstants::ChunkSize),
+									z + std::floor(cameraPosition.z / (float)WorldConstants::ChunkSize)};
+		if(!chunkExistsAt(chunkPosition))
+		{
+			addChunk(chunkPosition.x, chunkPosition.y);
+			addedPositions.push_back(chunkPosition);
+		}
+	}
+
+	//add chunk pointers after all operations on map (delete/emplace) are done 
+	//so that we do not store any invalidated iterators
+	for(auto& chunkPos : addedPositions)
+	{
+		prepareChunkToBuild(chunkPos);
+		prepareChunkToBuild(chunkPos.x - 1, chunkPos.y);
+		prepareChunkToBuild(chunkPos.x + 1, chunkPos.y);
+		prepareChunkToBuild(chunkPos.x, chunkPos.y + 1);
+		prepareChunkToBuild(chunkPos.x, chunkPos.y - 1);
+	}
 }
 
 void World::batchChunks()
@@ -114,7 +139,6 @@ glm::ivec3 World::getBlockPosition(const glm::ivec3& position) const
 
 glm::ivec3 World::getBlockPosition(int x, int y, int z) const
 {
-	return {x % 16, y, z % 16};
 	return {(WorldConstants::ChunkSize + (x % WorldConstants::ChunkSize)) % WorldConstants::ChunkSize,
 			y,
 			(WorldConstants::ChunkSize + (z % WorldConstants::ChunkSize)) % WorldConstants::ChunkSize};
@@ -129,5 +153,5 @@ void World::prepareChunkToBuild(const glm::ivec2& chunkPosition)
 {
 	if(!chunkExistsAt(chunkPosition))
 		return;
-	m_chunksToBuild.push_back(&m_chunks.at(chunkPosition));
+	m_chunksToBuild.insert(&m_chunks.at(chunkPosition));
 }

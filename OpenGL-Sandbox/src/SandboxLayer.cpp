@@ -59,7 +59,7 @@ void SandboxLayer::OnUpdate(Timestep ts)
 
 	raycast(c);
 
-	m_world.update();
+	m_world.update(m_camera.position);
 	Renderer::update();
 }
 

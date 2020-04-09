@@ -1,6 +1,7 @@
 #pragma once
 
 #include<unordered_map>
+#include<unordered_set>
 #include<glm/glm.hpp>
 
 #include"Chunk/Chunk.h"
@@ -24,7 +25,7 @@ public:
 	void setBlock(const glm::ivec3& position, ChunkBlock block);
 	void setBlock(int x, int y, int z, ChunkBlock block);
 
-	void update();
+	void update(const glm::vec3& cameraPosition);
 	void batchChunks();
 private:
 	bool outOfBounds(const glm::ivec3& pos) const;
@@ -40,5 +41,5 @@ private:
 private:
 	ChunkMeshBuilder m_chunkBuilder;
 	std::unordered_map<glm::ivec2, Chunk> m_chunks;
-	std::vector<Chunk*> m_chunksToBuild;
+	std::unordered_set<Chunk*> m_chunksToBuild;
 };
