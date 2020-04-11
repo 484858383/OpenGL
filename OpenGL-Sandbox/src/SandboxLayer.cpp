@@ -33,6 +33,7 @@ void SandboxLayer::OnAttach()
 	BlockDatabase::get();
 	TextureAtlas::get();
 	Renderer::init(m_camera);
+	m_camera.speed = 1.f;
 }
 
 void SandboxLayer::OnDetach()

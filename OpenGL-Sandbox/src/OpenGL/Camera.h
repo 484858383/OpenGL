@@ -19,6 +19,7 @@ public:
 	glm::vec3 position = glm::vec3(0.f);
 	glm::vec3 rotation = glm::vec3(0.f);
 	glm::vec3 velocity = glm::vec3(0.f);
+	float speed = 4.f;
 private:
 	glm::mat4 m_projectionMatrix;
 };

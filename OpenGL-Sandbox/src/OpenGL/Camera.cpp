@@ -14,7 +14,6 @@ void Camera::update(GLCore::Timestep ts)
 
 void Camera::input()
 {
-	float speed = 0.5f;
 	if(GLCore::Input::IsKeyPressed(GLFW_KEY_W))
 	{
 		velocity.z -= speed * glm::sin(glm::radians(rotation.x + 90));
