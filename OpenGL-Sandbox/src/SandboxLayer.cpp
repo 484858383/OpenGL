@@ -56,12 +56,16 @@ void SandboxLayer::OnUpdate(Timestep ts)
 
 	Renderer::clear();
 
-	m_world.batchChunks();
-
 	raycast(c);
-
 	m_world.update(m_camera.position);
+
+	m_world.batchChunks();
 	Renderer::update();
+
+	
+	m_world.buildChunks();
+	m_world.deleteChunks();
+
 }
 
 void SandboxLayer::OnImGuiRender()

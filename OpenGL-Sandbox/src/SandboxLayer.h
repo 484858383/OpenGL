@@ -3,7 +3,7 @@
 #include<GLCore/Core/Application.h>
 
 #include"OpenGL/Camera.h"
-#include"Game/World.h"
+#include"Game/World/World.h"
 
 class Clock;
 
