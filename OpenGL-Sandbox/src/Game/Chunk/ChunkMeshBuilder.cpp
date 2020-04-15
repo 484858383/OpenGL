@@ -3,7 +3,7 @@
 #include"Chunk.h"
 #include"ChunkMesh.h"
 #include"../TextureAtlas.h"
-#include"../World.h"
+#include"../World/World.h"
 
 #include<GLCore/Core/Log.h>
 

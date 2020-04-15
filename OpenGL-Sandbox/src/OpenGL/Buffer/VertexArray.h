@@ -34,7 +34,7 @@ public:
 private:
 	void deleteData();
 private:
-	GLuint m_ID;
+	GLuint m_ID = 0;
 	unsigned m_numberIndicies = 0;
 	unsigned m_indexCounter = 0;
 

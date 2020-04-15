@@ -5,15 +5,7 @@
 Chunk::Chunk(int x, int y)
 	:m_position(x, y)
 {
-	for(int y = 0; y < WorldConstants::ChunkHeight; y++)
-	for(int x = 0; x < WorldConstants::ChunkSize; x++)
-	for(int z = 0; z < WorldConstants::ChunkSize; z++)
-	{
-		if(y < WorldConstants::GrassLevel)
-			setBlock(x, y, z, ChunkBlock::grass);
-		else
-			setBlock(x, y, z, ChunkBlock::air);
-	}
+	m_blocks.fill(ChunkBlock::air);
 }
 
 const Block& Chunk::getBlock(const glm::ivec3& pos) const
@@ -55,6 +47,11 @@ void Chunk::setPosition(const glm::ivec2 pos)
 void Chunk::setPosition(int x, int z)
 {
 	m_position = glm::ivec2(x, z);
+}
+
+int Chunk::getHeightAt(int x, int z) const
+{
+	return m_heightMap.at(z * WorldConstants::ChunkSize + x);
 }
 
 int Chunk::index(const glm::ivec3& pos) const

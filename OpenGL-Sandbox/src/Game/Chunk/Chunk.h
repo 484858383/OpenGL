@@ -3,7 +3,8 @@
 #include<array>
 #include<glm/glm.hpp>
 
-#include"../WorldConstants.h"
+#include"../World/WorldConstants.h"
+#include"../World/TerrainGenerator.h"
 #include"../Block/Block.h"
 #include"../Block/ChunkBlock.h"
 
@@ -36,6 +37,9 @@ public:
 
 	const VertexArray& getVertexArray() const { return m_vertexArray; }
 	unsigned getNumberIndices() const { return m_vertexArray.getNumberIndicies(); }
+
+	void setHeightMap(const ChunkHeightMap& heightMap) { m_heightMap = heightMap; }
+	int getHeightAt(int x, int z) const;
 private:
 	int index(const glm::ivec3& pos) const;
 	int index(int x, int y, int z) const;
@@ -44,6 +48,7 @@ private:
 	bool outOfBounds(int x, int y, int z) const;
 private:
 	std::array<ChunkBlock, WorldConstants::ChunkVolume> m_blocks;
+	ChunkHeightMap m_heightMap;
 	glm::ivec2 m_position;
 
 	VertexArray m_vertexArray;
