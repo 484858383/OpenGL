@@ -1,13 +1,9 @@
 #pragma once
 
-#include<unordered_map>
-#include<unordered_set>
 #include<glm/glm.hpp>
 
-#include"../Chunk/Chunk.h"
-#include"../Chunk/ChunkMeshBuilder.h"
-#include"../../Utility/Hasher.h"
 #include"TerrainGenerator.h"
+#include"../Chunk/ChunkManager.h"
 
 class World
 {
@@ -27,15 +23,14 @@ public:
 	void setBlock(int x, int y, int z, ChunkBlock block) { setBlock({x, y, z}, block); }
 
 	void update(const glm::vec3& cameraPosition);
-	void batchChunks();
 
-	void deleteChunks();
-	void buildChunks();
+	void batchChunks();
+	void deleteChunks() { m_chunks.deleteChunks(); }
+	void buildChunks() { m_chunks.buildChunks(); }
 private:
 	///bounds checking
 	bool outOfBounds(int y) const;
 	bool outOfBounds(const glm::ivec3& pos) { return outOfBounds(pos.y); };
-	bool chunkExistsAt(const glm::ivec2& position) const;
 
 	///position calculation
 	glm::ivec2 getChunkPosition(int x, int z) const;
@@ -43,15 +38,8 @@ private:
 	glm::ivec3 getBlockPosition(int x, int y, int z) const;
 	glm::ivec3 getBlockPosition(const glm::ivec3& position) const { return getBlockPosition(position.x, position.y, position.z); }
 
-	///chunk manipulation (map insert/build/delete)
 	void addChunk(int x, int z);
-	void prepareChunkToBuild(const glm::ivec2& chunkPosition);
-	void prepareChunkToBuild(int x, int z) { prepareChunkToBuild({x, z}); }
-	void prepareChunkToDelete(const glm::ivec2& chunkPosition);
 private:
-	ChunkMeshBuilder m_chunkBuilder;
+	ChunkManager m_chunks;
 	TerrainGenerator m_terrainGen;
-	std::unordered_map<glm::ivec2, Chunk> m_chunks;
-	std::unordered_set<glm::ivec2> m_keysToBuild;
-	std::unordered_set<glm::ivec2> m_keysToDelete;
 };
