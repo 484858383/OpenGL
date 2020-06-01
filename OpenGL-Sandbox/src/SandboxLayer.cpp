@@ -36,6 +36,7 @@ void SandboxLayer::OnAttach()
 	Renderer::init(m_camera);
 	m_camera.speed = 1.f;
 
+	//this should and will be moved onto a new layer (maybe "uiLayer" or "2dLayer") when more 2d visuals are needed
 	std::vector<GLfloat> crosshairVertices =
 	{
 		-1.f,  1.f, 0.f,
@@ -117,7 +118,7 @@ void SandboxLayer::raycast(Clock& clock)
 
 		while(ray.length() <= m_blockBreakRange)
 		{
-			glm::ivec3 position(ray.getPosition().x, ray.getPosition().y, ray.getPosition().z);
+			glm::ivec3 position(std::floor(ray.getPosition().x), std::floor(ray.getPosition().y), std::floor(ray.getPosition().z));
 			auto block = m_world.getBlock(position.x, position.y, position.z);
 
 			if(block != ChunkBlock::air)

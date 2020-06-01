@@ -31,6 +31,6 @@ private:
 	std::unordered_map<std::string, Texture> m_textures;
 private:
 	float m_timeToBreak = 0.25f; //time between breaking blocks when holding mouse1
-	float m_rayStep = 0.1f; //the lower this value is the more accurate it will be but it will take longer
+	float m_rayStep = 0.02f; //the lower this value is the more accurate it will be but it will take longer
 	float m_blockBreakRange = 5.f; //unit is number of blocks
 };
