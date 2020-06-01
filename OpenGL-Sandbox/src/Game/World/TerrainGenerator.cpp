@@ -86,10 +86,18 @@ void TerrainGenerator::generateBlockData(Chunk& chunk, ChunkHeightMap& hm)
 		for(int x = 0; x < WorldConstants::ChunkSize; x++)
 			for(int z = 0; z < WorldConstants::ChunkSize; z++)
 			{
-				if(y < heightAt(x, z, hm))
+				int height = heightAt(x, z, hm);
+				if(y == height)
 					chunk.setBlock(x, y, z, ChunkBlock::grass);
+				else if(y < height - 2)
+					chunk.setBlock(x, y, z, ChunkBlock::stone);
+				else if(y < height)
+					chunk.setBlock(x, y, z, ChunkBlock::dirt);
 				else
 					chunk.setBlock(x, y, z, ChunkBlock::air);
+
+				if(y == 0)
+					chunk.setBlock(x, y, z, ChunkBlock::bottom);
 			}
 }
 

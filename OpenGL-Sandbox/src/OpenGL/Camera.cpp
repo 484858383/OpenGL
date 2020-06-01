@@ -60,10 +60,10 @@ void Camera::input()
 
 	lastMousePos = {GLCore::Input::GetMouseX(), GLCore::Input::GetMouseY()};
 
-	if(rotation.y < -90.f)
-		rotation.y = -90.f;
-	if(rotation.y > 90.f)
-		rotation.y = 90.f;
+	if(rotation.y < -95.f)
+		rotation.y = -95.f;
+	if(rotation.y > 95.f)
+		rotation.y = 95.f;
 }
 
 void Camera::setProjectionMatrix(float fov, float aspectRatio)

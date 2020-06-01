@@ -8,5 +8,8 @@ uniform sampler2D u_texture;
 
 void main()
 {
-	outColor = vec4(texture(u_texture, v_texCoords));
+	vec4 frag = (texture(u_texture, v_texCoords));
+	if(frag.a == 0)
+		discard;
+	outColor = frag;
 }

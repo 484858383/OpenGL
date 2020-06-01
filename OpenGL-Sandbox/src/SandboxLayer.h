@@ -4,6 +4,9 @@
 
 #include"OpenGL/Camera.h"
 #include"Game/World/World.h"
+#include"OpenGL/Buffer/VertexArray.h"
+#include"OpenGL/Model2D.h"
+#include"OpenGL/Texture.h"
 
 class Clock;
 
@@ -23,6 +26,9 @@ private:
 private:
 	Camera m_camera;
 	World m_world;
+
+	Model2D m_crosshair;
+	std::unordered_map<std::string, Texture> m_textures;
 private:
 	float m_timeToBreak = 0.25f; //time between breaking blocks when holding mouse1
 	float m_rayStep = 0.1f; //the lower this value is the more accurate it will be but it will take longer

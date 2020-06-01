@@ -4,6 +4,9 @@ enum class ChunkBlock
 {
 	air = 0,
 	grass,
+	dirt,
+	stone,
+	bottom,
 
 	LAST
 };

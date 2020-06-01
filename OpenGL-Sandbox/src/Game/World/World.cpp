@@ -3,7 +3,6 @@
 #include"../Block/Database.h"
 #include"../Renderer/Renderer.h"
 
-
 World::World()
 	:m_chunks(*this)
 {

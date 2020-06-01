@@ -6,9 +6,10 @@
 #include"../../OpenGL/Camera.h"
 #include"../TextureAtlas.h"
 #include"..//Chunk/Chunk.h"
+#include"../../OpenGL/Model2D.h"
 
 Renderer::Renderer()
-	:m_chunkShader("TextureVert", "TextureFrag")
+	:m_chunkShader("3dVert", "TextureFrag"), m_2dTextureShader("2dVert", "TextureFrag")
 {
 	glfwSetInputMode(static_cast<GLFWwindow*>(GLCore::Application::Get().GetWindow().GetNativeWindow()),
 					 GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -23,6 +24,11 @@ void Renderer::bindCameraImpl(Camera& camera)
 void Renderer::addChunkToQueueImpl(const Chunk& chunk)
 {
 	m_chunks.push_back(&chunk);
+}
+
+void Renderer::add2DModelToQueueImpl(const Model2D& model)
+{
+	m_2dModels.push_back(&model);
 }
 
 void Renderer::clearImpl()
@@ -43,6 +49,16 @@ void Renderer::updateImpl()
 		glDrawElements(GL_TRIANGLES, chunk->getNumberIndices(), GL_UNSIGNED_INT, nullptr);
 	}
 	m_chunks.clear();
+
+	m_2dTextureShader.bind();
+
+	for(const Model2D* model : m_2dModels)
+	{
+		m_2dTextureShader.loadUniformMatrix("u_transform", model->getTransform());
+		model->bind();
+		glDrawElements(GL_TRIANGLES, model->getNumberIndicies(), GL_UNSIGNED_INT, nullptr);
+	}
+	m_2dModels.clear();
 }
 
 void Renderer::initImpl(Camera& camera)

@@ -4,6 +4,7 @@
 #include<GLCore/Core/Input.h>
 #include<glad/glad.h>
 #include<glm/glm.hpp>
+#include<glm/gtx/transform.hpp>
 
 #include<glfw/include/GLFW/glfw3.h>
 
@@ -34,6 +35,34 @@ void SandboxLayer::OnAttach()
 	TextureAtlas::get();
 	Renderer::init(m_camera);
 	m_camera.speed = 1.f;
+
+	std::vector<GLfloat> crosshairVertices =
+	{
+		-1.f,  1.f, 0.f,
+		-1.f, -1.f, 0.f,
+		 1.f, -1.f, 0.f,
+		 1.f,  1.f, 0.f,
+	};
+
+	std::vector<GLfloat> crosshairTextureCoords =
+	{
+		 1.f,  0.f,
+		 1.f,  1.f,
+		 0.f,  1.f,
+		 0.f,  0.f,
+	};
+
+	std::vector<unsigned> crosshairIndices =
+	{
+		0, 1, 2, 2, 3, 0
+	};
+
+	Mesh crosshairMesh = {crosshairVertices, crosshairTextureCoords, crosshairIndices};
+	m_textures.emplace("crosshair", "crosshair.png");
+
+	m_crosshair.constructMesh(crosshairMesh, m_textures.at("crosshair"));
+
+	m_crosshair.scale = {0.02f, 0.02f};
 }
 
 void SandboxLayer::OnDetach()
@@ -58,6 +87,8 @@ void SandboxLayer::OnUpdate(Timestep ts)
 
 	raycast(c);
 	m_world.update(m_camera.position);
+
+	Renderer::add2DModelToQueue(m_crosshair);
 
 	m_world.batchChunks();
 	Renderer::update();
@@ -87,13 +118,14 @@ void SandboxLayer::raycast(Clock& clock)
 		while(ray.length() <= m_blockBreakRange)
 		{
 			glm::ivec3 position(ray.getPosition().x, ray.getPosition().y, ray.getPosition().z);
+			auto block = m_world.getBlock(position.x, position.y, position.z);
 
-			if(m_world.getBlock(position.x, position.y, position.z) != ChunkBlock::air)
+			if(block != ChunkBlock::air)
 			{
-				if(Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1))
+				if(Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1) && block.getData().breakable)
 					m_world.setBlock(position.x, position.y, position.z, ChunkBlock::air);
-				else
-					m_world.setBlock(lastPosition.x, lastPosition.y, lastPosition.z, ChunkBlock::grass);
+				else if(Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_2))
+					m_world.setBlock(lastPosition.x, lastPosition.y, lastPosition.z, ChunkBlock::bottom);
 				break;
 			}
 			ray.step(m_rayStep);
