@@ -35,6 +35,7 @@ void SandboxLayer::OnAttach()
 	TextureAtlas::get();
 	Renderer::init(m_camera);
 	m_camera.speed = 1.f;
+	m_camera.position.y = 32.f;
 
 	//this should and will be moved onto a new layer (maybe "uiLayer" or "2dLayer") when more 2d visuals are needed
 	std::vector<GLfloat> crosshairVertices =

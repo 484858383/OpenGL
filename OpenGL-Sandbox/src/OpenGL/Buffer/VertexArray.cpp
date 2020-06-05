@@ -50,7 +50,7 @@ VertexArray::~VertexArray()
 void VertexArray::addAttribute(const std::string& attributeName, const std::vector<float>& data, int size)
 {
 	if(data.empty())
-		LOG_CRITICAL("trying to fill vertex buffer with no data, attribute: {}", attributeName);
+		return;
 	m_layout.push_back(std::make_pair(attributeName, size));
 
 	glBindVertexArray(m_ID);

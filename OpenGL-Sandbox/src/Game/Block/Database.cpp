@@ -8,6 +8,12 @@ BlockDatabase::BlockDatabase()
 	m_blocks[static_cast<unsigned>(ChunkBlock::dirt)] = DirtBlock();
 	m_blocks[static_cast<unsigned>(ChunkBlock::stone)] = StoneBlock();
 	m_blocks[static_cast<unsigned>(ChunkBlock::bottom)] = BottomBlock();
+	m_blocks[static_cast<unsigned>(ChunkBlock::sand)] = SandBlock();
+	m_blocks[static_cast<unsigned>(ChunkBlock::water)] = WaterBlock();
+	m_blocks[static_cast<unsigned>(ChunkBlock::oak_log)] = OakLogBlock();
+	m_blocks[static_cast<unsigned>(ChunkBlock::oak_leaves)] = OakLeavesBlock();
+	m_blocks[static_cast<unsigned>(ChunkBlock::cactus)] = CactusBlock();
+	m_blocks[static_cast<unsigned>(ChunkBlock::snow)] = SnowBlock();
 }
 
 const BlockData& BlockDatabase::getDataImpl(ChunkBlock block) const

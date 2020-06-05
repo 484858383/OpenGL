@@ -89,40 +89,76 @@ void ChunkMeshBuilder::buildMesh()
 	{
 		glm::ivec3 position = {x, y, z};
 		auto& block = m_chunk->getBlock(position);
-		if(block.getData().isTransparent)
+		if(block == ChunkBlock::air)
 			continue;
 
 		glm::ivec3 worldPosition = position + glm::ivec3(WorldConstants::ChunkSize * m_chunk->getPosition().x, 0,																   WorldConstants::ChunkSize * m_chunk->getPosition().y);
-
+	
 
 		if(m_world->getBlock(worldPosition + right).getData().isTransparent)
 		{
-			addFaceToMesh(x, y, z, block, direction::right);
+			if(m_world->getBlock(worldPosition + right) != ChunkBlock::water || block != ChunkBlock::water)
+			{
+				if(block == ChunkBlock::water)
+					addFaceToMesh(x, y, z, block, direction::right, m_mesh.waterMesh, m_mesh.waterIndexCount);
+				else
+					addFaceToMesh(x, y, z, block, direction::right, m_mesh.blockMesh, m_mesh.blockIndexCount);
+			}
 		}
 
 		if(m_world->getBlock(worldPosition + left).getData().isTransparent)
 		{
-			addFaceToMesh(x, y, z, block, direction::left);
+			if(m_world->getBlock(worldPosition + left) != ChunkBlock::water || block != ChunkBlock::water)
+			{
+				if(block == ChunkBlock::water)
+					addFaceToMesh(x, y, z, block, direction::left , m_mesh.waterMesh, m_mesh.waterIndexCount);
+				else
+					addFaceToMesh(x, y, z, block, direction::left, m_mesh.blockMesh, m_mesh.blockIndexCount);
+			}
 		}
 
 		if(m_world->getBlock(worldPosition + up).getData().isTransparent)
 		{
-			addFaceToMesh(x, y, z, block, direction::top);
+			if(m_world->getBlock(worldPosition + up) != ChunkBlock::water || block != ChunkBlock::water)
+			{
+				if(block == ChunkBlock::water)
+					addFaceToMesh(x, y, z, block, direction::top, m_mesh.waterMesh, m_mesh.waterIndexCount);
+				else
+					addFaceToMesh(x, y, z, block, direction::top, m_mesh.blockMesh, m_mesh.blockIndexCount);
+			}
 		}
 
 		if(m_world->getBlock(worldPosition + down).getData().isTransparent)
 		{
-			addFaceToMesh(x, y, z, block, direction::bottom);
+			if(m_world->getBlock(worldPosition + down) != ChunkBlock::water || block != ChunkBlock::water)
+			{
+				if(block == ChunkBlock::water)
+					addFaceToMesh(x, y, z, block, direction::bottom, m_mesh.waterMesh, m_mesh.waterIndexCount);
+				else
+					addFaceToMesh(x, y, z, block, direction::bottom, m_mesh.blockMesh, m_mesh.blockIndexCount);
+			}
 		}
 
 		if(m_world->getBlock(worldPosition + front).getData().isTransparent)
 		{
-			addFaceToMesh(x, y, z, block, direction::front);
+			if(m_world->getBlock(worldPosition + front) != ChunkBlock::water || block != ChunkBlock::water)
+			{
+				if(block == ChunkBlock::water)
+					addFaceToMesh(x, y, z, block, direction::front, m_mesh.waterMesh, m_mesh.waterIndexCount);
+				else
+					addFaceToMesh(x, y, z, block, direction::front, m_mesh.blockMesh, m_mesh.blockIndexCount);
+			}
 		}
 
 		if(m_world->getBlock(worldPosition + back).getData().isTransparent)
 		{
-			addFaceToMesh(x, y, z, block, direction::back);
+			if(m_world->getBlock(worldPosition + back) != ChunkBlock::water || block != ChunkBlock::water)
+			{
+				if(block == ChunkBlock::water)
+					addFaceToMesh(x, y, z, block, direction::back, m_mesh.waterMesh, m_mesh.waterIndexCount);
+				else
+					addFaceToMesh(x, y, z, block, direction::back, m_mesh.blockMesh, m_mesh.blockIndexCount);
+			}
 		}
 	}
 	
@@ -130,17 +166,18 @@ void ChunkMeshBuilder::buildMesh()
 
 void ChunkMeshBuilder::endMesh()
 {
-	m_chunk->m_vertexArray.addAttributes(m_mesh);
+	m_chunk->m_blockMesh.addAttributes(m_mesh.blockMesh);
+	m_chunk->m_waterMesh.addAttributes(m_mesh.waterMesh);
 
 	m_mesh.clear();
-	m_indexCounter = 0;
+
 	m_chunk = nullptr;
 #if SHOW_TIME
 	LOG_INFO("time taken to build chunk: {}ms", m_clock.getMilliseconds());
 #endif
 }
 
-void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, direction dir)
+void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, direction dir, Mesh& mesh, unsigned& indexCounter)
 {
 	float* faceData = nullptr;
 	const glm::ivec2* texCoords = nullptr;
@@ -189,8 +226,8 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 
 	auto texCoordData = TextureAtlas::getUVCoordinates(*texCoords);
 
-	auto& vertexPositions = m_mesh.positions;
-	auto& vertexTextureCoords = m_mesh.textureCoords;
+	auto& vertexPositions = mesh.positions;
+	auto& vertexTextureCoords = mesh.textureCoords;
 
 	for(int i = 0; i < 12; i += 3)
 	{
@@ -201,10 +238,10 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 
 	vertexTextureCoords.insert(vertexTextureCoords.end(), texCoordData.begin(), texCoordData.end());
 
-	m_mesh.indices.insert(m_mesh.indices.end(),
+	mesh.indices.insert(mesh.indices.end(),
 	{
-		m_indexCounter, m_indexCounter + 1, m_indexCounter + 2,
-		m_indexCounter + 2, m_indexCounter + 3, m_indexCounter,
+		indexCounter, indexCounter + 1, indexCounter + 2,
+		indexCounter + 2, indexCounter + 3, indexCounter,
 	});
-	m_indexCounter += 4;
+	indexCounter += 4;
 }

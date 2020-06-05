@@ -9,13 +9,13 @@ ChunkHeightMap TerrainGenerator::generateHeightMap(const glm::ivec2& position)
 {
 	ChunkHeightMap hm;
 
-	NoiseData hills;
-	hills.ampltude = 16;
-	hills.octaves = 6;
-	hills.frequency = 1.1f;
-	hills.persistence = 2.7f;
-	hills.smooth = 100.f;
-	hills.seed = 0;// std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	NoiseData mountains;
+	mountains.ampltude = 48;
+	mountains.octaves = 6;
+	mountains.frequency = 1.4f;
+	mountains.persistence = 2.3f;
+	mountains.smooth = 100.f;
+	mountains.seed = 0;// std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
 	NoiseData islands;
 	islands.ampltude = -32;
@@ -25,20 +25,23 @@ ChunkHeightMap TerrainGenerator::generateHeightMap(const glm::ivec2& position)
 	islands.smooth = 150.f;
 
 	NoiseData desert;
-	desert.ampltude = 24;
+	desert.ampltude = 33;
 	desert.octaves = 6;
-	desert.frequency = 1.3f;
-	desert.persistence = 2.4f;
-	desert.smooth = 250.f;
+	desert.frequency = 1.7f;
+	desert.persistence = 1.7f;
+	desert.smooth = 150.f;
+	desert.seed = 0;
 
-	PerlinNoise pn(hills);
+	PerlinNoise pn(desert);
 
 	for(int x = 0; x < WorldConstants::ChunkSize; x++)
 	for(int z = 0; z < WorldConstants::ChunkSize; z++)
 	{
 		if((x % 5) == 0 && (z % 5) == 0)
 		{
-			auto h = pn.Noise2D(x, z);
+			int wx = x + WorldConstants::ChunkSize * position.x;
+			int wz = z + WorldConstants::ChunkSize * position.y;
+			auto h = pn.Noise2D(wx, wz);
 			setHeight(x, z, h, hm);
 		}
 		else
@@ -82,19 +85,52 @@ ChunkHeightMap TerrainGenerator::generateHeightMap(const glm::ivec2& position)
 
 void TerrainGenerator::generateBlockData(Chunk& chunk, ChunkHeightMap& hm)
 {
+	//for(int y = 0; y < WorldConstants::ChunkHeight; y++)
+	//	for(int x = 0; x < WorldConstants::ChunkSize; x++)
+	//		for(int z = 0; z < WorldConstants::ChunkSize; z++)
+	//		{
+	//			int height = heightAt(x, z, hm);
+	//			if(y == height)
+	//				chunk.setBlock(x, y, z, ChunkBlock::grass);
+	//			else if(y < height - 2)
+	//				chunk.setBlock(x, y, z, ChunkBlock::stone);
+	//			else if(y < height)
+	//				chunk.setBlock(x, y, z, ChunkBlock::dirt);
+	//			else
+	//				chunk.setBlock(x, y, z, ChunkBlock::air);
+
+	//			if(y == 0)
+	//				chunk.setBlock(x, y, z, ChunkBlock::bottom);
+	//		}
 	for(int y = 0; y < WorldConstants::ChunkHeight; y++)
 		for(int x = 0; x < WorldConstants::ChunkSize; x++)
 			for(int z = 0; z < WorldConstants::ChunkSize; z++)
 			{
 				int height = heightAt(x, z, hm);
-				if(y == height)
-					chunk.setBlock(x, y, z, ChunkBlock::grass);
-				else if(y < height - 2)
-					chunk.setBlock(x, y, z, ChunkBlock::stone);
-				else if(y < height)
-					chunk.setBlock(x, y, z, ChunkBlock::dirt);
+
+				if(y < WorldConstants::WaterLevel)
+				{
+					if(y == height)
+						chunk.setBlock(x, y, z, ChunkBlock::sand);
+					else if(y < height - 2)
+						chunk.setBlock(x, y, z, ChunkBlock::stone);
+					else if(y < height)
+						chunk.setBlock(x, y, z, ChunkBlock::sand);
+					else
+						chunk.setBlock(x, y, z, ChunkBlock::water);
+				}
+
 				else
-					chunk.setBlock(x, y, z, ChunkBlock::air);
+				{
+					if(y == height)
+						chunk.setBlock(x, y, z, ChunkBlock::grass);
+					else if(y < height - 2)
+						chunk.setBlock(x, y, z, ChunkBlock::stone);
+					else if(y < height)
+						chunk.setBlock(x, y, z, ChunkBlock::dirt);
+					else
+						chunk.setBlock(x, y, z, ChunkBlock::air);
+				}
 
 				if(y == 0)
 					chunk.setBlock(x, y, z, ChunkBlock::bottom);

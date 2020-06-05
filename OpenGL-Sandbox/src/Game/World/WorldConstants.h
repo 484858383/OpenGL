@@ -6,6 +6,7 @@ namespace WorldConstants
 	constexpr int ChunkSize = 16;
 	constexpr int ChunkVolume = ChunkSize * ChunkSize * ChunkHeight;
 	constexpr int GrassLevel = 32;
+	constexpr int WaterLevel = GrassLevel - 3;
 	constexpr int renderDistance = 4;
 }
 

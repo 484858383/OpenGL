@@ -19,12 +19,12 @@ public:
 	void buildMesh();
 	void endMesh();
 private:
-	void addFaceToMesh(int x, int y, int z, const Block& block, direction dir);
+	void addFaceToMesh(int x, int y, int z, const Block& block, direction dir, Mesh& mesh, unsigned& indexCounter);
 private:
 	Chunk* m_chunk = nullptr;
 	World* m_world = nullptr;
 
-	Mesh m_mesh;
-	unsigned m_indexCounter = 0;
+	ChunkMesh m_mesh;
+
 	Clock m_clock;
 };

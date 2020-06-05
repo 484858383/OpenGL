@@ -35,8 +35,8 @@ public:
 	void setPosition(const glm::ivec2 pos);
 	void setPosition(int x, int z);
 
-	const VertexArray& getVertexArray() const { return m_vertexArray; }
-	unsigned getNumberIndices() const { return m_vertexArray.getNumberIndicies(); }
+	const VertexArray& getBlockMesh() const { return m_blockMesh; }
+	const VertexArray& getWaterMesh() const { return m_waterMesh; }
 
 	void setHeightMap(const ChunkHeightMap& heightMap) { m_heightMap = heightMap; }
 	int getHeightAt(int x, int z) const;
@@ -51,5 +51,6 @@ private:
 	ChunkHeightMap m_heightMap;
 	glm::ivec2 m_position;
 
-	VertexArray m_vertexArray;
+	VertexArray m_blockMesh;
+	VertexArray m_waterMesh;
 };

@@ -33,7 +33,7 @@ void Renderer::add2DModelToQueueImpl(const Model2D& model)
 
 void Renderer::clearImpl()
 {
-	glClearColor(0, 0, 0, 1);
+	glClearColor(0.15, 0.52, 0.90, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -45,9 +45,23 @@ void Renderer::updateImpl()
 
 	for(const Chunk* chunk : m_chunks)
 	{
-		chunk->getVertexArray().bind();
-		glDrawElements(GL_TRIANGLES, chunk->getNumberIndices(), GL_UNSIGNED_INT, nullptr);
+		unsigned blockIndicesCount = chunk->getBlockMesh().getNumberIndicies();
+
+
+		chunk->getBlockMesh().bind();
+		glDrawElements(GL_TRIANGLES, blockIndicesCount, GL_UNSIGNED_INT, nullptr);
 	}
+
+	//bind water shader here
+
+	for(const Chunk* chunk : m_chunks)
+	{
+		unsigned waterIndicesCount = chunk->getWaterMesh().getNumberIndicies();
+
+		chunk->getWaterMesh().bind();
+		glDrawElements(GL_TRIANGLES, waterIndicesCount, GL_UNSIGNED_INT, nullptr);
+	}
+
 	m_chunks.clear();
 
 	m_2dTextureShader.bind();

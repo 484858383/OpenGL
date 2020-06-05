@@ -7,6 +7,12 @@ enum class ChunkBlock
 	dirt,
 	stone,
 	bottom,
+	sand = 5,
+	water,
+	oak_log,
+	oak_leaves,
+	cactus,
+	snow = 10,
 
 	LAST
 };
