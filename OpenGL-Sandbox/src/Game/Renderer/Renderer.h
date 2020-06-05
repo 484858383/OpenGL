@@ -24,7 +24,7 @@ public:
 
 	static void bindCamera(Camera& camera) { get().bindCameraImpl(camera); }
 	static void clear() { get().clearImpl(); }
-	static void update() { get().updateImpl(); }
+	static void update(float time) { get().updateImpl(time); }
 	static void init(Camera& camera) { get().initImpl(camera); }
 private:
 	Renderer();
@@ -34,11 +34,12 @@ private:
 
 	void bindCameraImpl(Camera& camera);
 	void clearImpl();
-	void updateImpl();
+	void updateImpl(float time);
 	void initImpl(Camera& camera);
 private:
 	Shader m_chunkShader;
 	Shader m_2dTextureShader;
+	Shader m_waterShader;
 	Camera* m_camera = nullptr;
 	std::vector<const Chunk*> m_chunks;
 	std::vector<const Model2D*> m_2dModels;

@@ -110,7 +110,7 @@ GLint Shader::getUniformLocation(const std::string& name)
 
 	GLint uniformLocation = glGetUniformLocation(m_programID, name.c_str());
 	m_uniformLocations[name] = uniformLocation;
-	if(uniformLocation == -1)
+	if(uniformLocation <= -1)
 		LOG_WARN("uniform: {}, is invalid", name);
 
 

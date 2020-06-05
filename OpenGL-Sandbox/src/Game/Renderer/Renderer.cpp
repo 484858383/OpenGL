@@ -7,13 +7,18 @@
 #include"../TextureAtlas.h"
 #include"..//Chunk/Chunk.h"
 #include"../../OpenGL/Model2D.h"
+#include"../../Clock.h"
 
 Renderer::Renderer()
 	:m_chunkShader("3dVert", "TextureFrag"), m_2dTextureShader("2dVert", "TextureFrag")
+	,m_waterShader("WaterVert", "TextureFrag")
 {
 	glfwSetInputMode(static_cast<GLFWwindow*>(GLCore::Application::Get().GetWindow().GetNativeWindow()),
 					 GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void Renderer::bindCameraImpl(Camera& camera)
@@ -37,8 +42,10 @@ void Renderer::clearImpl()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Renderer::updateImpl()
+void Renderer::updateImpl(float time)
 {
+	static Clock c;
+
 	m_chunkShader.bind();
 	m_chunkShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
 	TextureAtlas::bind();
@@ -52,11 +59,15 @@ void Renderer::updateImpl()
 		glDrawElements(GL_TRIANGLES, blockIndicesCount, GL_UNSIGNED_INT, nullptr);
 	}
 
-	//bind water shader here
+	m_waterShader.bind();
+	m_waterShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
+	m_waterShader.loadUniform("u_time", (float)c.getSeconds());
 
 	for(const Chunk* chunk : m_chunks)
 	{
 		unsigned waterIndicesCount = chunk->getWaterMesh().getNumberIndicies();
+		if(waterIndicesCount == 0)
+			continue;
 
 		chunk->getWaterMesh().bind();
 		glDrawElements(GL_TRIANGLES, waterIndicesCount, GL_UNSIGNED_INT, nullptr);

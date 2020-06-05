@@ -93,7 +93,7 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	Renderer::add2DModelToQueue(m_crosshair);
 
 	m_world.batchChunks();
-	Renderer::update();
+	Renderer::update(ts);
 
 	
 	m_world.buildChunks();
@@ -127,7 +127,7 @@ void SandboxLayer::raycast(Clock& clock)
 				if(Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1) && block.getData().breakable)
 					m_world.setBlock(position.x, position.y, position.z, ChunkBlock::air);
 				else if(Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_2))
-					m_world.setBlock(lastPosition.x, lastPosition.y, lastPosition.z, ChunkBlock::bottom);
+					m_world.setBlock(lastPosition.x, lastPosition.y, lastPosition.z, ChunkBlock::oak_leaves);
 				break;
 			}
 			ray.step(m_rayStep);
