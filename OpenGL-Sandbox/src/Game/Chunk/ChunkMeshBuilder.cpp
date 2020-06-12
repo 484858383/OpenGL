@@ -94,13 +94,6 @@ void ChunkMeshBuilder::buildMesh()
 
 		glm::ivec3 worldPosition = position + glm::ivec3(WorldConstants::ChunkSize * m_chunk->getPosition().x, 0,													   			  WorldConstants::ChunkSize * m_chunk->getPosition().y);
 
-		auto& rightBlock = m_world->getBlock(worldPosition + right);
-		auto& leftBlock = m_world->getBlock(worldPosition + left);
-		auto& backBlock = m_world->getBlock(worldPosition + back);
-		auto& frontBlock = m_world->getBlock(worldPosition + front);
-		auto& upBlock = m_world->getBlock(worldPosition + up);
-		auto& downBlock = m_world->getBlock(worldPosition + down);
-
 		tryToAddFace(worldPosition, position, right, block, direction::right);
 		tryToAddFace(worldPosition, position, left, block, direction::left);
 		tryToAddFace(worldPosition, position, back, block, direction::back);
