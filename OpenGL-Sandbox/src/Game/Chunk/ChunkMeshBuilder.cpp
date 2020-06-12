@@ -100,11 +100,10 @@ void ChunkMeshBuilder::buildMesh()
 		auto& frontBlock = m_world->getBlock(worldPosition + front);
 		auto& upBlock = m_world->getBlock(worldPosition + up);
 		auto& downBlock = m_world->getBlock(worldPosition + down);
-	
 
 		if(rightBlock.getData().isTransparent)
 		{
-			if(rightBlock != ChunkBlock::water || block != ChunkBlock::water)
+			if(rightBlock == ChunkBlock::air || !block.getData().isTransparent)
 			{
 				if(block == ChunkBlock::water)
 					addFaceToMesh(x, y, z, block, direction::right, m_mesh.waterMesh, m_mesh.waterIndexCount);
@@ -115,7 +114,7 @@ void ChunkMeshBuilder::buildMesh()
 
 		if(leftBlock.getData().isTransparent)
 		{
-			if(leftBlock != ChunkBlock::water || block != ChunkBlock::water)
+			if(leftBlock == ChunkBlock::air || !block.getData().isTransparent)
 			{
 				if(block == ChunkBlock::water)
 					addFaceToMesh(x, y, z, block, direction::left , m_mesh.waterMesh, m_mesh.waterIndexCount);
@@ -126,7 +125,7 @@ void ChunkMeshBuilder::buildMesh()
 
 		if(upBlock.getData().isTransparent)
 		{
-			if(upBlock != ChunkBlock::water || block != ChunkBlock::water)
+			if(upBlock == ChunkBlock::air || !block.getData().isTransparent)
 			{
 				if(block == ChunkBlock::water)
 					addFaceToMesh(x, y, z, block, direction::top, m_mesh.waterMesh, m_mesh.waterIndexCount);
@@ -137,7 +136,7 @@ void ChunkMeshBuilder::buildMesh()
 
 		if(downBlock.getData().isTransparent)
 		{
-			if(downBlock != ChunkBlock::water || block != ChunkBlock::water)
+			if(downBlock == ChunkBlock::air || !block.getData().isTransparent)
 			{
 				if(block == ChunkBlock::water)
 					addFaceToMesh(x, y, z, block, direction::bottom, m_mesh.waterMesh, m_mesh.waterIndexCount);
@@ -148,7 +147,7 @@ void ChunkMeshBuilder::buildMesh()
 
 		if(frontBlock.getData().isTransparent)
 		{
-			if(frontBlock != ChunkBlock::water || block != ChunkBlock::water)
+			if(frontBlock == ChunkBlock::air || !block.getData().isTransparent)
 			{
 				if(block == ChunkBlock::water)
 					addFaceToMesh(x, y, z, block, direction::front, m_mesh.waterMesh, m_mesh.waterIndexCount);
@@ -159,7 +158,7 @@ void ChunkMeshBuilder::buildMesh()
 
 		if(backBlock.getData().isTransparent)
 		{
-			if(backBlock != ChunkBlock::water || block != ChunkBlock::water)
+			if(backBlock == ChunkBlock::air || !block.getData().isTransparent)
 			{
 				if(block == ChunkBlock::water)
 					addFaceToMesh(x, y, z, block, direction::back, m_mesh.waterMesh, m_mesh.waterIndexCount);
