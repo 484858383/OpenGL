@@ -3,11 +3,13 @@
 #include"../Chunk/Chunk.h"
 #include"../../Utility/PerlinNoise.h"
 
+#include"Biome/Plains.h"
+#include"Biome/Archipelago.h"
+
 #include<chrono>
 
-ChunkHeightMap TerrainGenerator::generateHeightMap(const glm::ivec2& position)
+TerrainGenerator::TerrainGenerator()
 {
-	ChunkHeightMap hm;
 
 	NoiseData mountains;
 	mountains.ampltude = 48;
@@ -17,61 +19,103 @@ ChunkHeightMap TerrainGenerator::generateHeightMap(const glm::ivec2& position)
 	mountains.smooth = 100.f;
 	mountains.seed = 0;// std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
-	NoiseData islands;
-	islands.ampltude = -32;
-	islands.octaves = 6;
-	islands.frequency = 1.7f;
-	islands.persistence = 2.4f;
-	islands.smooth = 150.f;
+	NoiseData plains;
+	plains.ampltude = 38;
+	plains.octaves = 6;
+	plains.frequency = 2.f;
+	plains.persistence = 1.6f;
+	plains.smooth = 200.f;
+	plains.seed = 0;
 
-	NoiseData desert;
-	desert.ampltude = 33;
-	desert.octaves = 6;
-	desert.frequency = 1.7f;
-	desert.persistence = 1.7f;
-	desert.smooth = 150.f;
-	desert.seed = 0;
+	NoiseData archipelago;
+	archipelago.ampltude = 28;
+	archipelago.octaves = 6;
+	archipelago.frequency = 1.5f;
+	archipelago.persistence = 1.9f;
+	archipelago.smooth = 150.f;
+	archipelago.seed = 0;
 
-	PerlinNoise pn(desert);
+	NoiseData biomeNoiseData;
+	biomeNoiseData.ampltude = 28;
+	biomeNoiseData.octaves = 6;
+	biomeNoiseData.frequency = 1.5f;
+	biomeNoiseData.persistence = 2.5f;
+	biomeNoiseData.smooth = 1000.f;
+	biomeNoiseData.seed = 0;
 
+	m_biomeNoise.setNoiseFunction(biomeNoiseData);
+
+	m_biomes.emplace_back(std::make_unique<PlainsBiome>(plains));
+	m_biomes.emplace_back(std::make_unique<ArchipelagoBiome>(archipelago));
+}
+
+ChunkHeightMap TerrainGenerator::generateHeightMap(const glm::ivec2& position)
+{
+	ChunkHeightMap hm;
+	m_biomeMap.fill(BiomeType::plains); //clear the biome map for new chunk
+
+	BiomeType lastBiome;
+	
 	for(int x = 0; x < WorldConstants::ChunkSize; x++)
 	for(int z = 0; z < WorldConstants::ChunkSize; z++)
 	{
-		if((x % 5) == 0 && (z % 5) == 0)
+		if((x % 3) == 0 && (z % 3) == 0)
 		{
 			int wx = x + WorldConstants::ChunkSize * position.x;
 			int wz = z + WorldConstants::ChunkSize * position.y;
-			auto h = pn.Noise2D(wx, wz);
+
+			auto biomeValue = m_biomeNoise.Noise2D(wx, wz);
+			int biomeIndex = 0;
+
+			if(biomeValue > 25.f)
+			{
+				biomeIndex = static_cast<int>(BiomeType::archipelago);
+				setBiome(x, z, BiomeType::archipelago);
+				lastBiome = BiomeType::archipelago;
+			}
+			else
+			{
+				biomeIndex = static_cast<int>(BiomeType::plains);
+				setBiome(x, z, BiomeType::plains);
+				lastBiome = BiomeType::plains;
+			}
+
+			auto h = m_biomes[biomeIndex]->getNoise2D(wx, wz);
 			setHeight(x, z, h, hm);
 		}
 		else
+		{
 			setHeight(x, z, 16, hm);
+			setBiome(x, z, lastBiome);
+		}
+
 	}
 
 	//these are the coords of the blocks that were given a height previously and are going to be used for the interpolation calculations
-	int x1 = 0;
-	int x2 = 5;
+
+	int x1 = -3;
+	int x2 =  0;
 
 	for(int x = 0; x < WorldConstants::ChunkSize; x++)
 	{
-		int z1 = 0;
-		int z2 = 5;
+		int z1 = -3;
+		int z2 =  0;
 
-		if(x == 5 || x == 10)
+		if(x % 3 == 0 && x < 15)
 		{
-			x1 += 5;
-			x2 += 5;
+			x1 += 3;
+			x2 += 3;
 		}
 
 		for(int z = 0; z < WorldConstants::ChunkSize; z++)
 		{
-			if(z == 5 || z == 10)
+			if(z % 3 == 0 && z < 15)
 			{
-				z1 += 5;
-				z2 += 5;
+				z1 += 3;
+				z2 += 3;
 			}
 
-			if((x % 5) == 0 && (z % 5) == 0)
+			if((x % 3) == 0 && (z % 3) == 0)
 				continue; //these heights are already calculated
 
 			auto h = bilerp(x1, x2, z1, z2, x, z, hm);
@@ -85,55 +129,22 @@ ChunkHeightMap TerrainGenerator::generateHeightMap(const glm::ivec2& position)
 
 void TerrainGenerator::generateBlockData(Chunk& chunk, ChunkHeightMap& hm)
 {
-	//for(int y = 0; y < WorldConstants::ChunkHeight; y++)
-	//	for(int x = 0; x < WorldConstants::ChunkSize; x++)
-	//		for(int z = 0; z < WorldConstants::ChunkSize; z++)
-	//		{
-	//			int height = heightAt(x, z, hm);
-	//			if(y == height)
-	//				chunk.setBlock(x, y, z, ChunkBlock::grass);
-	//			else if(y < height - 2)
-	//				chunk.setBlock(x, y, z, ChunkBlock::stone);
-	//			else if(y < height)
-	//				chunk.setBlock(x, y, z, ChunkBlock::dirt);
-	//			else
-	//				chunk.setBlock(x, y, z, ChunkBlock::air);
-
-	//			if(y == 0)
-	//				chunk.setBlock(x, y, z, ChunkBlock::bottom);
-	//		}
 	for(int y = 0; y < WorldConstants::ChunkHeight; y++)
 		for(int x = 0; x < WorldConstants::ChunkSize; x++)
 			for(int z = 0; z < WorldConstants::ChunkSize; z++)
 			{
 				int height = heightAt(x, z, hm);
 
-				if(y < WorldConstants::WaterLevel)
-				{
-					if(y == height)
-						chunk.setBlock(x, y, z, ChunkBlock::sand);
-					else if(y < height - 2)
-						chunk.setBlock(x, y, z, ChunkBlock::stone);
-					else if(y < height)
-						chunk.setBlock(x, y, z, ChunkBlock::sand);
-					else
-						chunk.setBlock(x, y, z, ChunkBlock::water);
-				}
+				BiomeType biome = biomeAt(x, z);
 
+				if(y == height)
+					m_biomes[static_cast<int>(biome)]->placeSurfaceBlock(chunk, {x, y, z});
+				else if(y < height - 2)
+					m_biomes[static_cast<int>(biome)]->placeUndergroundBlock(chunk, {x, y, z});
+				else if(y < height)
+					m_biomes[static_cast<int>(biome)]->placeSubSurfaceBlock(chunk, {x, y, z});
 				else
-				{
-					if(y == height)
-						chunk.setBlock(x, y, z, ChunkBlock::grass);
-					else if(y < height - 2)
-						chunk.setBlock(x, y, z, ChunkBlock::stone);
-					else if(y < height)
-						chunk.setBlock(x, y, z, ChunkBlock::dirt);
-					else
-						chunk.setBlock(x, y, z, ChunkBlock::air);
-				}
-
-				if(y == 0)
-					chunk.setBlock(x, y, z, ChunkBlock::bottom);
+					m_biomes[static_cast<int>(biome)]->placeFillBlock(chunk, {x, y, z});
 			}
 }
 

@@ -99,7 +99,7 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	m_world.buildChunks();
 	m_world.deleteChunks();
 
-	LOG_INFO("fps: {}", 1 / ts);
+	//LOG_INFO("fps: {}", 1 / ts);
 }
 
 void SandboxLayer::OnImGuiRender()
