@@ -34,7 +34,7 @@ void ChunkManager::deleteChunks()
 
 void ChunkManager::buildChunks()
 {
-	for(auto key : m_keysToBuild)
+	/*for(auto key : m_keysToBuild)
 	{
 		if(chunkExistsAt(key))
 		{
@@ -43,7 +43,19 @@ void ChunkManager::buildChunks()
 			m_chunkBuilder.endMesh();
 		}
 	}
-	m_keysToBuild.clear();
+	m_keysToBuild.clear();*/
+
+	auto iter = m_keysToBuild.begin();
+	if(iter != m_keysToBuild.end())
+	{
+		if(chunkExistsAt(*iter))
+		{
+			m_chunkBuilder.beginMesh(m_chunks.at(*iter), *m_world);
+			m_chunkBuilder.buildMesh();
+			m_chunkBuilder.endMesh();
+		}
+		m_keysToBuild.erase(iter);
+	}
 }
 
 bool ChunkManager::chunkExistsAt(const glm::ivec2& position) const
