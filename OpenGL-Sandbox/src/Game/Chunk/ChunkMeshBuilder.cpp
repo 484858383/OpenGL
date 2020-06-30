@@ -53,6 +53,20 @@ namespace
 		0, 0, 0,
 		1, 0, 0,
 	};
+	std::vector<float> xFace1 =
+	{
+		0, 1, 0,
+		0, 0, 0,
+		1, 0, 1,
+		1, 1, 1,
+	};
+	std::vector<float> xFace2 =
+	{
+		0, 1, 1,
+		0, 0, 1,
+		1, 0, 0,
+		1, 1, 0,
+	};
 
 	glm::ivec3 front = { 0,  0,  1};
 	glm::ivec3 back =  { 0,  0, -1};
@@ -67,6 +81,7 @@ enum class direction : int
 	front, back,
 	left, right,
 	top, bottom,
+	xFace1, xFace2
 };
 
 
@@ -125,7 +140,7 @@ void ChunkMeshBuilder::tryToAddFace(const glm::ivec3& worldPosition, const glm::
 
 	if(displacedBlock.getData().isTransparent || displacedBlock.getData().isTranslucent)
 	{
-		if(displacedBlock == ChunkBlock::air || (!block.getData().isTransparent) && !block.getData().isTranslucent)
+		if(displacedBlock == ChunkBlock::air || (!block.getData().isTransparent && !block.getData().isTranslucent))
 		{
 			if(block == ChunkBlock::water)
 				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
@@ -133,6 +148,13 @@ void ChunkMeshBuilder::tryToAddFace(const glm::ivec3& worldPosition, const glm::
 			else if(block.getData().isTranslucent)
 				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
 							  block, dir, m_mesh.translucentBlockMesh, m_mesh.translucentIndexCount);
+			else if(block == ChunkBlock::grass_foliage || block.getData().isTransparent || block.getData().isTranslucent)
+			{
+				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
+							  block, direction::xFace1, m_mesh.translucentBlockMesh, m_mesh.translucentIndexCount);
+				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
+							  block, direction::xFace2, m_mesh.translucentBlockMesh, m_mesh.translucentIndexCount);
+			}
 			else
 				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
 							  block, dir, m_mesh.blockMesh, m_mesh.blockIndexCount);
@@ -181,6 +203,18 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 		{
 			faceData = bottomFace.data();
 			texCoords = &block.getData().bottomTextureCoords;
+		}
+		break;
+		case direction::xFace1:
+		{
+			faceData = xFace1.data();
+			texCoords = &block.getData().sideTextureCoords;
+		}
+		break;
+		case direction::xFace2:
+		{
+			faceData = xFace2.data();
+			texCoords = &block.getData().sideTextureCoords;
 		}
 		break;
 		default:

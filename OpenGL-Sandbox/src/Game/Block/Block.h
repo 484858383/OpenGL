@@ -224,3 +224,39 @@ public:
 		m_data.bottomTextureCoords = {3, 0};
 	}
 };
+
+class GrassFoliageBlock : public Block
+{
+public:
+	GrassFoliageBlock()
+	{
+		m_data.ID = 11;
+		m_data.isFoliage = true;
+		m_data.isTransparent = true;
+		m_data.hasCollision = false;
+		m_data.isLiquid = false;
+		m_data.breakable = true;
+		m_data.isTranslucent = false;
+		m_data.topTextureCoords = {0, 0};
+		m_data.sideTextureCoords = {14, 0};
+		m_data.bottomTextureCoords = {0, 0};
+	}
+};
+
+class RoseFoliageBlock : public Block
+{
+public:
+	RoseFoliageBlock()
+	{
+		m_data.ID = 12;
+		m_data.isFoliage = true;
+		m_data.isTransparent = true;
+		m_data.hasCollision = false;
+		m_data.isLiquid = false;
+		m_data.breakable = true;
+		m_data.isTranslucent = false;
+		m_data.topTextureCoords = {0, 0};
+		m_data.sideTextureCoords = {13, 0};
+		m_data.bottomTextureCoords = {0, 0};
+	}
+};

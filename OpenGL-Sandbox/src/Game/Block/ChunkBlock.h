@@ -13,6 +13,8 @@ enum class ChunkBlock
 	oak_leaves,
 	cactus,
 	snow = 10,
+	grass_foliage,
+	rose,
 
 	LAST
 };

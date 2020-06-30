@@ -14,6 +14,8 @@ BlockDatabase::BlockDatabase()
 	m_blocks[static_cast<unsigned>(ChunkBlock::oak_leaves)] = OakLeavesBlock();
 	m_blocks[static_cast<unsigned>(ChunkBlock::cactus)] = CactusBlock();
 	m_blocks[static_cast<unsigned>(ChunkBlock::snow)] = SnowBlock();
+	m_blocks[static_cast<unsigned>(ChunkBlock::grass_foliage)] = GrassFoliageBlock();
+	m_blocks[static_cast<unsigned>(ChunkBlock::rose)] = RoseFoliageBlock();
 }
 
 const BlockData& BlockDatabase::getDataImpl(ChunkBlock block) const

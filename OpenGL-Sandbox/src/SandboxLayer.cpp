@@ -128,7 +128,7 @@ void SandboxLayer::raycast(Clock& clock)
 				if(Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1) && block.getData().breakable)
 					m_world.setBlock(position.x, position.y, position.z, ChunkBlock::air);
 				else if(Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_2))
-					m_world.setBlock(lastPosition.x, lastPosition.y, lastPosition.z, ChunkBlock::oak_leaves);
+					m_world.setBlock(lastPosition.x, lastPosition.y, lastPosition.z, ChunkBlock::grass_foliage);
 				break;
 			}
 			ray.step(m_rayStep);

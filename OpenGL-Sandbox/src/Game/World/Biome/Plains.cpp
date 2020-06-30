@@ -3,10 +3,12 @@
 #include"../WorldConstants.h"
 #include"../../Chunk/Chunk.h"
 #include"../World.h"
+#include"../../../Utility/Random.h"
 
 PlainsBiome::PlainsBiome(const NoiseData& nd)
 	:Biome(nd)
 {
+	m_treeRarity = 1000;
 }
 
 void PlainsBiome::placeSurfaceBlock(Chunk& chunk, const glm::ivec3& position)
@@ -86,4 +88,13 @@ void PlainsBiome::placeTree(World& world, const glm::ivec3& position)
 
 void PlainsBiome::placeFoliage(Chunk& chunk, const glm::ivec3& position)
 {
+	if(position.y <= WorldConstants::WaterLevel)
+		return;
+	if(Random::getIntInRange(0, 9) == 0)
+	{
+		if(Random::getIntInRange(0, 14) == 0)
+			chunk.setBlock(position.x, position.y, position.z, ChunkBlock::rose);
+		else
+			chunk.setBlock(position.x, position.y, position.z, ChunkBlock::grass_foliage);
+	}
 }

@@ -77,6 +77,8 @@ void Renderer::updateImpl(float time)
 	m_chunkShader.bind();
 	m_chunkShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
 
+	glDisable(GL_CULL_FACE);
+
 	for(const Chunk* chunk : m_chunks)
 	{
 		unsigned translucentIndicesCount = chunk->getTranslucentMesh().getNumberIndicies();
@@ -84,6 +86,8 @@ void Renderer::updateImpl(float time)
 		chunk->getTranslucentMesh().bind();
 		glDrawElements(GL_TRIANGLES, translucentIndicesCount, GL_UNSIGNED_INT, nullptr);
 	}
+
+	glEnable(GL_CULL_FACE);
 
 	m_chunks.clear();
 

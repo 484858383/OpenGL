@@ -40,7 +40,10 @@ public:
 	virtual void placeFoliage(Chunk& chunk, const glm::ivec3& position) = 0;
 
 	virtual float getNoise2D(float x, float y) { return m_noise.Noise2D(x, y); }
+	virtual unsigned getTreeRarity() { return m_treeRarity; }
 protected:
 	PerlinNoise m_noise;
 	NoiseData m_noiseData;
+	//used in Random::getIntInRange(0, m_treeRarity) == 0 to see how often trees should be randomly placed
+	unsigned m_treeRarity = 1000; 
 };

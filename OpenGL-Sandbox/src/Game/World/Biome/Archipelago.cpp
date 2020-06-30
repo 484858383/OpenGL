@@ -8,6 +8,7 @@
 ArchipelagoBiome::ArchipelagoBiome(const NoiseData& nd)
 	:Biome(nd)
 {
+	m_treeRarity = 399;
 }
 
 void ArchipelagoBiome::placeSurfaceBlock(Chunk& chunk, const glm::ivec3& position)
@@ -94,4 +95,10 @@ void ArchipelagoBiome::placeTree(World& world, const glm::ivec3& position)
 
 void ArchipelagoBiome::placeFoliage(Chunk& chunk, const glm::ivec3& position)
 {
+	if(position.y <= WorldConstants::WaterLevel)
+		return;
+	if(Random::getIntInRange(0, 9) == 0)
+	{
+		chunk.setBlock(position.x, position.y, position.z, ChunkBlock::grass_foliage);
+	}
 }

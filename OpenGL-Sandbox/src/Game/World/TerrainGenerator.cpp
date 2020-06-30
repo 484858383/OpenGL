@@ -158,8 +158,9 @@ void TerrainGenerator::generateBlockData(ChunkHeightMap& hm)
 		if(y == height)
 		{
 			m_biomes[static_cast<int>(biome)]->placeSurfaceBlock(*m_chunk, position);
+			auto treeRarity = m_biomes[static_cast<int>(biome)]->getTreeRarity();
 
-			if(Random::getIntInRange(0, 399) == 0)
+			if(Random::getIntInRange(0, treeRarity) == 0)
 			{
 				glm::ivec3 worldPos;
 				worldPos.x = m_chunk->getPosition().x * WorldConstants::ChunkSize + x;
@@ -173,10 +174,14 @@ void TerrainGenerator::generateBlockData(ChunkHeightMap& hm)
 			m_biomes[static_cast<int>(biome)]->placeUndergroundBlock(*m_chunk, position);
 		else if(y < height)
 			m_biomes[static_cast<int>(biome)]->placeSubSurfaceBlock(*m_chunk, position);
+		else if(y == height + 1 && y > WorldConstants::WaterLevel)
+		{
+			m_biomes[static_cast<int>(biome)]->placeFoliage(*m_chunk, position);
+		}
+
+
 		else
 			m_biomes[static_cast<int>(biome)]->placeFillBlock(*m_chunk, position);
-
-
 	}
 }
 
