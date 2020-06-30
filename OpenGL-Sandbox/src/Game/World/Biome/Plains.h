@@ -11,7 +11,7 @@ public:
 	void placeUndergroundBlock(Chunk& chunk, const glm::ivec3& position) override;
 	void placeFillBlock(Chunk& chunk, const glm::ivec3& position) override;
 
-	void placeTree(Chunk& chunk, const glm::ivec3& position) override;
+	void placeTree(World& world, const glm::ivec3& position) override;
 	void placeFoliage(Chunk& chunk, const glm::ivec3& position) override;
 private:
 };

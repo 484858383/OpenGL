@@ -8,15 +8,20 @@
 #include"Biome/Biome.h"
 
 class Chunk;
+class World;
 
 class TerrainGenerator
 {
 public:
-	TerrainGenerator();
+	TerrainGenerator(World& world);
 	~TerrainGenerator() = default;
 
+	void generateChunkTerrain(Chunk& chunk);
+	void generateTreeData();
+
+private:
 	ChunkHeightMap generateHeightMap(const glm::ivec2& position);
-	void generateBlockData(Chunk& chunk, ChunkHeightMap& hm);
+	void generateBlockData(ChunkHeightMap& hm);
 private:
 	int index(int x, int y);
 	float TerrainGenerator::bilerp(float x1, float x2, float z1, float z2, float x, float z, ChunkHeightMap& hm);
@@ -25,7 +30,12 @@ private:
 	int heightAt(int x, int z, ChunkHeightMap& hm) { return hm.at(index(x, z)); }
 	BiomeType biomeAt(int x, int z) { return m_biomeMap.at(index(x, z)); }
 
-	std::array<BiomeType, WorldConstants::ChunkSize * WorldConstants::ChunkSize> m_biomeMap;
-	std::vector<std::unique_ptr<Biome>> m_biomes;
 	PerlinNoise m_biomeNoise;
+	std::vector<std::unique_ptr<Biome>> m_biomes;
+
+	//volatile data - these data structures will be cleared before generating any new chunk data
+	std::array<BiomeType, WorldConstants::ChunkSize * WorldConstants::ChunkSize> m_biomeMap;
+	std::vector<std::pair<BiomeType, glm::ivec3>> m_treeLocations;
+	World& m_world;
+	Chunk* m_chunk = nullptr;
 };

@@ -1,15 +1,19 @@
 #include "TerrainGenerator.h"
 
+#include"World.h"
+
 #include"../Chunk/Chunk.h"
-#include"../../Utility/PerlinNoise.h"
 
 #include"Biome/Plains.h"
 #include"Biome/Archipelago.h"
 
-#include<chrono>
+#include"../../Utility/PerlinNoise.h"
+#include"../../Utility/Random.h"
 
-TerrainGenerator::TerrainGenerator()
+TerrainGenerator::TerrainGenerator(World& world)
+	:m_world(world)
 {
+	auto seed = Random::getSeed();
 
 	NoiseData mountains;
 	mountains.ampltude = 48;
@@ -17,7 +21,7 @@ TerrainGenerator::TerrainGenerator()
 	mountains.frequency = 1.4f;
 	mountains.persistence = 2.3f;
 	mountains.smooth = 100.f;
-	mountains.seed = 0;// std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	mountains.seed = seed;
 
 	NoiseData plains;
 	plains.ampltude = 38;
@@ -25,7 +29,7 @@ TerrainGenerator::TerrainGenerator()
 	plains.frequency = 2.f;
 	plains.persistence = 1.6f;
 	plains.smooth = 200.f;
-	plains.seed = 0;
+	plains.seed = seed;
 
 	NoiseData archipelago;
 	archipelago.ampltude = 28;
@@ -33,7 +37,7 @@ TerrainGenerator::TerrainGenerator()
 	archipelago.frequency = 1.5f;
 	archipelago.persistence = 1.9f;
 	archipelago.smooth = 150.f;
-	archipelago.seed = 0;
+	archipelago.seed = seed;
 
 	NoiseData biomeNoiseData;
 	biomeNoiseData.ampltude = 28;
@@ -41,7 +45,7 @@ TerrainGenerator::TerrainGenerator()
 	biomeNoiseData.frequency = 1.5f;
 	biomeNoiseData.persistence = 2.5f;
 	biomeNoiseData.smooth = 1000.f;
-	biomeNoiseData.seed = 0;
+	biomeNoiseData.seed = seed;
 
 	m_biomeNoise.setNoiseFunction(biomeNoiseData);
 
@@ -49,11 +53,22 @@ TerrainGenerator::TerrainGenerator()
 	m_biomes.emplace_back(std::make_unique<ArchipelagoBiome>(archipelago));
 }
 
+void TerrainGenerator::generateChunkTerrain(Chunk& chunk)
+{
+	m_chunk = &chunk;
+	m_biomeMap.fill(BiomeType::plains); //clear the biome map for new chunk
+	m_treeLocations.clear(); //clear tree locations from previous chunk
+
+	auto heightMap = generateHeightMap(m_chunk->getPosition());
+
+	m_chunk->setHeightMap(heightMap);
+	generateBlockData(heightMap);
+	generateTreeData();
+}
+
 ChunkHeightMap TerrainGenerator::generateHeightMap(const glm::ivec2& position)
 {
 	ChunkHeightMap hm;
-	m_biomeMap.fill(BiomeType::plains); //clear the biome map for new chunk
-
 	BiomeType lastBiome;
 	
 	for(int x = 0; x < WorldConstants::ChunkSize; x++)
@@ -127,25 +142,48 @@ ChunkHeightMap TerrainGenerator::generateHeightMap(const glm::ivec2& position)
 	return hm;
 }
 
-void TerrainGenerator::generateBlockData(Chunk& chunk, ChunkHeightMap& hm)
+void TerrainGenerator::generateBlockData(ChunkHeightMap& hm)
 {
+	assert(m_chunk, "terrain generator is trying to modify an invalid chunk");
+
 	for(int y = 0; y < WorldConstants::ChunkHeight; y++)
-		for(int x = 0; x < WorldConstants::ChunkSize; x++)
-			for(int z = 0; z < WorldConstants::ChunkSize; z++)
+	for(int x = 0; x < WorldConstants::ChunkSize; x++)
+	for(int z = 0; z < WorldConstants::ChunkSize; z++)
+	{
+		int height = heightAt(x, z, hm);
+
+		BiomeType biome = biomeAt(x, z);
+		glm::ivec3 position = {x, y, z};
+
+		if(y == height)
+		{
+			m_biomes[static_cast<int>(biome)]->placeSurfaceBlock(*m_chunk, position);
+
+			if(Random::getIntInRange(0, 399) == 0)
 			{
-				int height = heightAt(x, z, hm);
+				glm::ivec3 worldPos;
+				worldPos.x = m_chunk->getPosition().x * WorldConstants::ChunkSize + x;
+				worldPos.z = m_chunk->getPosition().y * WorldConstants::ChunkSize + z;
+				worldPos.y = y;
 
-				BiomeType biome = biomeAt(x, z);
-
-				if(y == height)
-					m_biomes[static_cast<int>(biome)]->placeSurfaceBlock(chunk, {x, y, z});
-				else if(y < height - 2)
-					m_biomes[static_cast<int>(biome)]->placeUndergroundBlock(chunk, {x, y, z});
-				else if(y < height)
-					m_biomes[static_cast<int>(biome)]->placeSubSurfaceBlock(chunk, {x, y, z});
-				else
-					m_biomes[static_cast<int>(biome)]->placeFillBlock(chunk, {x, y, z});
+				m_treeLocations.push_back({biome, worldPos});
 			}
+		}
+		else if(y < height - 2)
+			m_biomes[static_cast<int>(biome)]->placeUndergroundBlock(*m_chunk, position);
+		else if(y < height)
+			m_biomes[static_cast<int>(biome)]->placeSubSurfaceBlock(*m_chunk, position);
+		else
+			m_biomes[static_cast<int>(biome)]->placeFillBlock(*m_chunk, position);
+
+
+	}
+}
+
+void TerrainGenerator::generateTreeData()
+{
+	for(auto& location : m_treeLocations)
+		m_biomes[static_cast<int>(location.first)]->placeTree(m_world, location.second);
 }
 
 int TerrainGenerator::index(int x, int y)

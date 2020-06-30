@@ -4,7 +4,7 @@
 #include"../Renderer/Renderer.h"
 
 World::World()
-	:m_chunks(*this)
+	:m_chunks(*this), m_terrainGen(*this)
 {
 	/*for(int x = 0; x < 2; x++)
 	for(int z = 0; z < 2; z++)
@@ -118,10 +118,8 @@ glm::ivec3 World::getBlockPosition(int x, int y, int z) const
 void World::addChunk(int x, int z)
 {
 	Chunk chunk(x, z);
-	auto heightMap = m_terrainGen.generateHeightMap(chunk.getPosition());
-
-	chunk.setHeightMap(heightMap);
-	m_terrainGen.generateBlockData(chunk, heightMap);
-
+	m_terrainGen.generateChunkTerrain(chunk);
 	m_chunks.add(glm::ivec2(x, z), std::move(chunk));
+
+	m_terrainGen.generateTreeData();
 }

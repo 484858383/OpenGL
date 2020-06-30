@@ -56,7 +56,6 @@ void Renderer::updateImpl(float time)
 	{
 		unsigned blockIndicesCount = chunk->getBlockMesh().getNumberIndicies();
 
-
 		chunk->getBlockMesh().bind();
 		glDrawElements(GL_TRIANGLES, blockIndicesCount, GL_UNSIGNED_INT, nullptr);
 	}
@@ -73,6 +72,17 @@ void Renderer::updateImpl(float time)
 
 		chunk->getWaterMesh().bind();
 		glDrawElements(GL_TRIANGLES, waterIndicesCount, GL_UNSIGNED_INT, nullptr);
+	}
+
+	m_chunkShader.bind();
+	m_chunkShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
+
+	for(const Chunk* chunk : m_chunks)
+	{
+		unsigned translucentIndicesCount = chunk->getTranslucentMesh().getNumberIndicies();
+
+		chunk->getTranslucentMesh().bind();
+		glDrawElements(GL_TRIANGLES, translucentIndicesCount, GL_UNSIGNED_INT, nullptr);
 	}
 
 	m_chunks.clear();

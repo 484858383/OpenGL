@@ -10,6 +10,7 @@ enum class BiomeType : int
 };
 
 class Chunk;
+class World;
 
 class Biome
 {
@@ -35,7 +36,7 @@ public:
 
 	virtual void placeFillBlock(Chunk& chunk, const glm::ivec3& position) = 0;
 
-	virtual void placeTree(Chunk& chunk, const glm::ivec3& position) = 0;
+	virtual void placeTree(World& world, const glm::ivec3& position) = 0;
 	virtual void placeFoliage(Chunk& chunk, const glm::ivec3& position) = 0;
 
 	virtual float getNoise2D(float x, float y) { return m_noise.Noise2D(x, y); }

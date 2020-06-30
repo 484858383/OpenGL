@@ -108,6 +108,7 @@ void ChunkMeshBuilder::endMesh()
 {
 	m_chunk->m_blockMesh.addAttributes(m_mesh.blockMesh);
 	m_chunk->m_waterMesh.addAttributes(m_mesh.waterMesh);
+	m_chunk->m_translucentBlocksMesh.addAttributes(m_mesh.translucentBlockMesh);
 
 	m_mesh.clear();
 
@@ -129,6 +130,9 @@ void ChunkMeshBuilder::tryToAddFace(const glm::ivec3& worldPosition, const glm::
 			if(block == ChunkBlock::water)
 				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
 							  block, dir, m_mesh.waterMesh, m_mesh.waterIndexCount);
+			else if(block == ChunkBlock::oak_leaves)
+				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
+							  block, dir, m_mesh.translucentBlockMesh, m_mesh.translucentIndexCount);
 			else
 				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
 							  block, dir, m_mesh.blockMesh, m_mesh.blockIndexCount);
