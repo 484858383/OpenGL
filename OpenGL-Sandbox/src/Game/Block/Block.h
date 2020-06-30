@@ -10,6 +10,7 @@ struct BlockData
 	bool hasCollision = false;
 	bool isLiquid = false;
 	bool breakable = false;
+	bool isTranslucent = false;
 	glm::ivec2 topTextureCoords;
 	glm::ivec2 bottomTextureCoords;
 	glm::ivec2 sideTextureCoords;
@@ -37,6 +38,7 @@ public:
 		m_data.hasCollision = false;
 		m_data.isLiquid = false;
 		m_data.breakable = false;
+		m_data.isTranslucent = false;
 		m_data.topTextureCoords = {0, 0};
 		m_data.sideTextureCoords = {0, 0};
 		m_data.bottomTextureCoords = {0, 0};
@@ -54,6 +56,7 @@ public:
 		m_data.hasCollision = true;
 		m_data.isLiquid = false;
 		m_data.breakable = true;
+		m_data.isTranslucent = false;
 		m_data.topTextureCoords = {1, 0};
 		m_data.sideTextureCoords = {2, 0};
 		m_data.bottomTextureCoords = {3, 0};
@@ -71,6 +74,7 @@ public:
 		m_data.hasCollision = true;
 		m_data.isLiquid = false;
 		m_data.breakable = true;
+		m_data.isTranslucent = false;
 		m_data.topTextureCoords = {3, 0};
 		m_data.sideTextureCoords = {3, 0};
 		m_data.bottomTextureCoords = {3, 0};
@@ -88,6 +92,7 @@ public:
 		m_data.hasCollision = true;
 		m_data.isLiquid = false;
 		m_data.breakable = true;
+		m_data.isTranslucent = false;
 		m_data.topTextureCoords = {4, 0};
 		m_data.sideTextureCoords = {4, 0};
 		m_data.bottomTextureCoords = {4, 0};
@@ -105,6 +110,7 @@ public:
 		m_data.hasCollision = true;
 		m_data.isLiquid = false;
 		m_data.breakable = false;
+		m_data.isTranslucent = false;
 		m_data.topTextureCoords = {0, 1};
 		m_data.sideTextureCoords = {0, 1};
 		m_data.bottomTextureCoords = {0, 1};
@@ -122,6 +128,7 @@ public:
 		m_data.hasCollision = true;
 		m_data.isLiquid = false;
 		m_data.breakable = true;
+		m_data.isTranslucent = false;
 		m_data.topTextureCoords = {5, 0};
 		m_data.sideTextureCoords = {5, 0};
 		m_data.bottomTextureCoords = {5, 0};
@@ -135,10 +142,11 @@ public:
 	{
 		m_data.ID = 6;
 		m_data.isFoliage = false;
-		m_data.isTransparent = true;
+		m_data.isTransparent = false;
 		m_data.hasCollision = true;
 		m_data.isLiquid = true;
 		m_data.breakable = false;
+		m_data.isTranslucent = true;
 		m_data.topTextureCoords = {6, 0};
 		m_data.sideTextureCoords = {6, 0};
 		m_data.bottomTextureCoords = {6, 0};
@@ -156,6 +164,7 @@ public:
 		m_data.hasCollision = true;
 		m_data.isLiquid = false;
 		m_data.breakable = true;
+		m_data.isTranslucent = false;
 		m_data.topTextureCoords = {8, 0};
 		m_data.sideTextureCoords = {7, 0};
 		m_data.bottomTextureCoords = {8, 0};
@@ -169,10 +178,11 @@ public:
 	{
 		m_data.ID = 8;
 		m_data.isFoliage = true;
-		m_data.isTransparent = true;
+		m_data.isTransparent = false;
 		m_data.hasCollision = true;
 		m_data.isLiquid = false;
 		m_data.breakable = true;
+		m_data.isTranslucent = true;
 		m_data.topTextureCoords = {9, 0};
 		m_data.sideTextureCoords = {9, 0};
 		m_data.bottomTextureCoords = {9, 0};
@@ -190,6 +200,7 @@ public:
 		m_data.hasCollision = true;
 		m_data.isLiquid = false;
 		m_data.breakable = true;
+		m_data.isTranslucent = false;
 		m_data.topTextureCoords = {10, 0};
 		m_data.sideTextureCoords = {10, 0};
 		m_data.bottomTextureCoords = {10, 0};
@@ -207,6 +218,7 @@ public:
 		m_data.hasCollision = true;
 		m_data.isLiquid = false;
 		m_data.breakable = true;
+		m_data.isTranslucent = false;
 		m_data.topTextureCoords = {11, 0};
 		m_data.sideTextureCoords = {12, 0};
 		m_data.bottomTextureCoords = {3, 0};

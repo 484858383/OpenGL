@@ -123,14 +123,14 @@ void ChunkMeshBuilder::tryToAddFace(const glm::ivec3& worldPosition, const glm::
 {
 	auto& displacedBlock = m_world->getBlock(worldPosition + displacement);
 
-	if(displacedBlock.getData().isTransparent)
+	if(displacedBlock.getData().isTransparent || displacedBlock.getData().isTranslucent)
 	{
-		if(displacedBlock == ChunkBlock::air || !block.getData().isTransparent)
+		if(displacedBlock == ChunkBlock::air || (!block.getData().isTransparent) && !block.getData().isTranslucent)
 		{
 			if(block == ChunkBlock::water)
 				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
 							  block, dir, m_mesh.waterMesh, m_mesh.waterIndexCount);
-			else if(block == ChunkBlock::oak_leaves)
+			else if(block.getData().isTranslucent)
 				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
 							  block, dir, m_mesh.translucentBlockMesh, m_mesh.translucentIndexCount);
 			else
