@@ -9,7 +9,8 @@ namespace WorldConstants
 	constexpr int ChunkVolume = ChunkSize * ChunkSize * ChunkHeight;
 	constexpr int GrassLevel = 32;
 	constexpr int WaterLevel = GrassLevel - 3;
-	constexpr int renderDistance = 8;
+	constexpr int RenderDistance = 8;
+	constexpr int TreeHeight = 7;
 }
 
 using ChunkHeightMap = std::array<int, WorldConstants::ChunkSize * WorldConstants::ChunkSize>;

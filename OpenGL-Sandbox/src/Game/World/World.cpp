@@ -50,8 +50,8 @@ void World::update(const glm::vec3& cameraPosition)
 	std::vector<glm::ivec2> addedPositions;
 
 	//add chunks in player's radius
-	for(int x = -WorldConstants::renderDistance; x <= WorldConstants::renderDistance; x++)
-	for(int z = -WorldConstants::renderDistance; z <= WorldConstants::renderDistance; z++)
+	for(int x = -WorldConstants::RenderDistance; x <= WorldConstants::RenderDistance; x++)
+	for(int z = -WorldConstants::RenderDistance; z <= WorldConstants::RenderDistance; z++)
 	{
 		glm::ivec2 chunkPosition = {x + std::floor(cameraPosition.x / (float)WorldConstants::ChunkSize),
 									z + std::floor(cameraPosition.z / (float)WorldConstants::ChunkSize)};
@@ -66,10 +66,10 @@ void World::update(const glm::vec3& cameraPosition)
 	//remove chunks outside player's radius
 	for(auto& pair : m_chunks)
 	{
-		glm::ivec2 max = {std::floor(cameraPosition.x / (float)WorldConstants::ChunkSize + WorldConstants::renderDistance),
-						  std::floor(cameraPosition.z / (float)WorldConstants::ChunkSize + WorldConstants::renderDistance)};
-		glm::ivec2 min = {std::floor(cameraPosition.x / (float)WorldConstants::ChunkSize - WorldConstants::renderDistance),
-						  std::floor(cameraPosition.z / (float)WorldConstants::ChunkSize - WorldConstants::renderDistance)};
+		glm::ivec2 max = {std::floor(cameraPosition.x / (float)WorldConstants::ChunkSize + WorldConstants::RenderDistance),
+						  std::floor(cameraPosition.z / (float)WorldConstants::ChunkSize + WorldConstants::RenderDistance)};
+		glm::ivec2 min = {std::floor(cameraPosition.x / (float)WorldConstants::ChunkSize - WorldConstants::RenderDistance),
+						  std::floor(cameraPosition.z / (float)WorldConstants::ChunkSize - WorldConstants::RenderDistance)};
 
 		auto& position = pair.second.getPosition();
 
