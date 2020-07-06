@@ -166,6 +166,7 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 {
 	float* faceData = nullptr;
 	const glm::ivec2* texCoords = nullptr;
+	float faceBrightness = 1.f;
 
 	switch(dir)
 	{
@@ -173,48 +174,56 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 		{
 			faceData = frontFace.data();
 			texCoords = &block.getData().sideTextureCoords;
+			faceBrightness = 0.6f;
 		}
 		break;
 		case direction::back:
 		{
 			faceData = backFace.data();
 			texCoords = &block.getData().sideTextureCoords;
+			faceBrightness = 0.6f;
 		}
 		break;
 		case direction::left:
 		{
 			faceData = leftFace.data();
 			texCoords = &block.getData().sideTextureCoords;
+			faceBrightness = 0.6f;
 		}
 		break;
 		case direction::right:
 		{
 			faceData = rightFace.data();
 			texCoords = &block.getData().sideTextureCoords;
+			faceBrightness = 0.6f;
 		}
 		break;
 		case direction::top:
 		{
 			faceData = topFace.data();
 			texCoords = &block.getData().topTextureCoords;
+			faceBrightness = 1.f;
 		}
 		break;
 		case direction::bottom:
 		{
 			faceData = bottomFace.data();
 			texCoords = &block.getData().bottomTextureCoords;
+			faceBrightness = 0.3f;
 		}
 		break;
 		case direction::xFace1:
 		{
 			faceData = xFace1.data();
 			texCoords = &block.getData().sideTextureCoords;
+			faceBrightness = 1.f;
 		}
 		break;
 		case direction::xFace2:
 		{
 			faceData = xFace2.data();
 			texCoords = &block.getData().sideTextureCoords;
+			faceBrightness = 1.f;
 		}
 		break;
 		default:
@@ -225,6 +234,13 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 
 	auto& vertexPositions = mesh.positions;
 	auto& vertexTextureCoords = mesh.textureCoords;
+	auto& vertexBrightness = mesh.faceBrightness;
+
+	if(block.getData().isLiquid)
+		faceBrightness = 1.f;
+
+	for(int i = 0; i < 4; i++)
+		vertexBrightness.emplace_back(faceBrightness);
 
 	for(int i = 0; i < 12; i += 3)
 	{

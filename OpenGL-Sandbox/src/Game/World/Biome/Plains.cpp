@@ -81,7 +81,7 @@ void PlainsBiome::placeTree(World& world, const glm::ivec3& position)
 	for(int i = 1; i < WorldConstants::TreeHeight - 1; i++)
 	{
 		auto block = world.getBlock(position.x, position.y + i, position.z);
-		if(block == ChunkBlock::air || block == ChunkBlock::oak_leaves)
+		if(block == ChunkBlock::air || block == ChunkBlock::oak_leaves || block.getData().isFoliage)
 			world.setBlock(position.x, position.y + i, position.z, ChunkBlock::oak_log);
 	}
 }
