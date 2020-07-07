@@ -81,6 +81,14 @@ glm::mat4 Camera::getProjectionViewMatrix() const
 	return m_projectionMatrix * view;
 }
 
+glm::mat4 Camera::getViewMatrix() const
+{
+	glm::mat4 view(1.0f);
+	view = glm::rotate(view, glm::radians(rotation.y), {1.f, 0.f, 0.f});
+	view = glm::rotate(view, glm::radians(rotation.x), {0.f, 1.f, 0.f});
+	return glm::translate(view, -position);
+}
+
 glm::vec3 Camera::lookAt() const
 {
 	glm::mat4 view(1.0f);

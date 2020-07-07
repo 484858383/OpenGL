@@ -1,6 +1,8 @@
 #pragma once
 
 #include"../../OpenGL/Shader/Shader.h"
+#include"../../Clock.h"
+#include"Skybox.h"
 
 class Chunk;
 class Camera;
@@ -36,11 +38,23 @@ private:
 	void clearImpl();
 	void updateImpl(float time);
 	void initImpl(Camera& camera);
+
+	void drawChunks(float time);
+	void drawSkybox(float time);
+	void draw2DModels(float time);
 private:
+	//shaders
 	Shader m_chunkShader;
 	Shader m_2dTextureShader;
 	Shader m_waterShader;
+	Shader m_skyboxShader;
+private:
+	//tools
 	Camera* m_camera = nullptr;
+	Clock m_clock;
+private:
+	//models/vertex arrays
+	Skybox m_skybox;
 	std::vector<const Chunk*> m_chunks;
 	std::vector<const Model2D*> m_2dModels;
 };

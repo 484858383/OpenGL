@@ -11,7 +11,8 @@
 
 Renderer::Renderer()
 	:m_chunkShader("3dVert", "TextureFrag"), m_2dTextureShader("2dVert", "TextureFrag")
-	,m_waterShader("WaterVert", "TextureFrag")
+	,m_waterShader("WaterVert", "TextureFrag"), m_skyboxShader("SkyboxVert", "SkyboxFrag"),
+	m_skybox("default")
 {
 	glfwSetInputMode(static_cast<GLFWwindow*>(GLCore::Application::Get().GetWindow().GetNativeWindow()),
 					 GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -43,11 +44,27 @@ void Renderer::clearImpl()
 	glClearColor(0.15, 0.52, 0.90, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
-
+//fix skybox and clean renderer
 void Renderer::updateImpl(float time)
 {
 	static Clock c;
 
+	drawSkybox(time);
+	drawChunks(time);
+	draw2DModels(time);
+}
+
+void Renderer::initImpl(Camera& camera)
+{
+	bindCameraImpl(camera);
+	auto& window = GLCore::Application::Get().GetWindow();
+
+	float aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
+	m_camera->setProjectionMatrix(90.f, aspect);
+}
+
+void Renderer::drawChunks(float time)
+{
 	m_chunkShader.bind();
 	m_chunkShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
 	TextureAtlas::bind();
@@ -62,7 +79,7 @@ void Renderer::updateImpl(float time)
 
 	m_waterShader.bind();
 	m_waterShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
-	m_waterShader.loadUniform("u_time", (float)c.getSeconds());
+	m_waterShader.loadUniform("u_time", (float)m_clock.getSeconds());
 
 	for(const Chunk* chunk : m_chunks)
 	{
@@ -90,7 +107,26 @@ void Renderer::updateImpl(float time)
 	glEnable(GL_CULL_FACE);
 
 	m_chunks.clear();
+}
+#include<glm/gtc/matrix_transform.hpp>
+void Renderer::drawSkybox(float time)
+{
+	glDepthFunc(GL_LEQUAL);
+	m_skyboxShader.bind();
 
+	glm::mat4 view(1.0f);
+	view = glm::translate(m_camera->position);
+
+	m_skyboxShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix() * view);
+	m_skybox.getCubemap().bind();
+	m_skybox.getCubeMesh().bind();
+
+	glDrawElements(GL_TRIANGLES, m_skybox.getCubeMesh().getNumberIndicies(), GL_UNSIGNED_INT, nullptr);
+	glDepthFunc(GL_LESS);
+}
+
+void Renderer::draw2DModels(float time)
+{
 	m_2dTextureShader.bind();
 
 	for(const Model2D* model : m_2dModels)
@@ -100,13 +136,4 @@ void Renderer::updateImpl(float time)
 		glDrawElements(GL_TRIANGLES, model->getNumberIndicies(), GL_UNSIGNED_INT, nullptr);
 	}
 	m_2dModels.clear();
-}
-
-void Renderer::initImpl(Camera& camera)
-{
-	bindCameraImpl(camera);
-	auto& window = GLCore::Application::Get().GetWindow();
-
-	float aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
-	m_camera->setProjectionMatrix(90.f, aspect);
 }
