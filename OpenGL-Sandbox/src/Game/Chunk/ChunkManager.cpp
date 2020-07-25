@@ -5,9 +5,9 @@ ChunkManager::ChunkManager(World& world)
 {
 }
 
-void ChunkManager::add(glm::ivec2&& key, Chunk&& chunk)
+void ChunkManager::add(const glm::ivec2& key, std::unique_ptr<Chunk>&& chunk)
 {
-	m_chunks.emplace(std::move(key), std::move(chunk));
+	m_chunks[key] = std::move(chunk);
 }
 
 void ChunkManager::prepareChunkToBuild(const glm::ivec2& position)
@@ -50,7 +50,7 @@ void ChunkManager::buildChunks()
 	{
 		if(chunkExistsAt(*iter))
 		{
-			m_chunkBuilder.beginMesh(m_chunks.at(*iter), *m_world);
+			m_chunkBuilder.beginMesh(*m_chunks.at(*iter), *m_world);
 			m_chunkBuilder.buildMesh();
 			m_chunkBuilder.endMesh();
 		}

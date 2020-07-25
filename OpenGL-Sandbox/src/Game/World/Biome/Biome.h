@@ -39,7 +39,7 @@ public:
 	virtual void placeTree(World& world, const glm::ivec3& position) = 0;
 	virtual void placeFoliage(Chunk& chunk, const glm::ivec3& position) = 0;
 
-	virtual float getNoise2D(float x, float y) { return m_noise.Noise2D(x, y); }
+	virtual double getNoise2D(float x, float y) { return m_noise.Noise2D(x, y); }
 	virtual unsigned getTreeRarity() { return m_treeRarity; }
 protected:
 	PerlinNoise m_noise;

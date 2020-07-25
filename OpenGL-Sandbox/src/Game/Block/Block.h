@@ -11,9 +11,9 @@ struct BlockData
 	bool isLiquid = false;
 	bool breakable = false;
 	bool isTranslucent = false;
-	glm::ivec2 topTextureCoords;
-	glm::ivec2 bottomTextureCoords;
-	glm::ivec2 sideTextureCoords;
+	glm::ivec2 topTextureCoords = {0, 0};
+	glm::ivec2 bottomTextureCoords = {0, 0};
+	glm::ivec2 sideTextureCoords = {0, 0};
 };
 
 class Block

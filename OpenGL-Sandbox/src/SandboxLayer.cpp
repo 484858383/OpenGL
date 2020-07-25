@@ -98,8 +98,6 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	
 	m_world.buildChunks();
 	m_world.deleteChunks();
-
-	//LOG_INFO("fps: {}", 1 / ts);
 }
 
 void SandboxLayer::OnImGuiRender()
@@ -116,7 +114,7 @@ void SandboxLayer::raycast(Clock& clock)
 	{
 		clock.reset();
 		Ray ray(m_camera);
-		glm::vec3 lastPosition;
+		glm::vec3 lastPosition = {0, 0, 0};
 
 		while(ray.length() <= m_blockBreakRange)
 		{

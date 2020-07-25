@@ -58,6 +58,7 @@ void Renderer::initImpl(Camera& camera)
 {
 	bindCameraImpl(camera);
 	auto& window = GLCore::Application::Get().GetWindow();
+	window.SetVSync(false);
 
 	float aspect = static_cast<float>(window.GetWidth()) / static_cast<float>(window.GetHeight());
 	m_camera->setProjectionMatrix(90.f, aspect);

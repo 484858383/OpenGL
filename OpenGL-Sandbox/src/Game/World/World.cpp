@@ -71,7 +71,7 @@ void World::update(const glm::vec3& cameraPosition)
 		glm::ivec2 min = {std::floor(cameraPosition.x / (float)WorldConstants::ChunkSize - WorldConstants::RenderDistance),
 						  std::floor(cameraPosition.z / (float)WorldConstants::ChunkSize - WorldConstants::RenderDistance)};
 
-		auto& position = pair.second.getPosition();
+		auto& position = pair.second->getPosition();
 
 		if(position.x > max.x || position.x < min.x || position.y > max.y || position.y < min.y)
 			m_chunks.prepareChunkToDelete(position);
@@ -91,7 +91,7 @@ void World::batchChunks()
 {
 	for(auto& pair : m_chunks)
 	{
-		Renderer::addChunkToQueue(pair.second);
+		Renderer::addChunkToQueue(*pair.second);
 	}
 }
 
@@ -117,8 +117,8 @@ glm::ivec3 World::getBlockPosition(int x, int y, int z) const
 
 void World::addChunk(int x, int z)
 {
-	Chunk chunk(x, z);
-	m_terrainGen.generateChunkTerrain(chunk);
+	auto chunk = std::make_unique<Chunk>(x, z);
+	m_terrainGen.generateChunkTerrain(*chunk);
 	m_chunks.add(glm::ivec2(x, z), std::move(chunk));
 
 	m_terrainGen.generateTreeData();

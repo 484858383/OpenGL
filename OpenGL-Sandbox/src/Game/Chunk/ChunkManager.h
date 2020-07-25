@@ -7,6 +7,8 @@
 #include"../Chunk/ChunkMeshBuilder.h"
 #include"../../Utility/Hasher.h"
 
+using ChunkMap = std::unordered_map<glm::ivec2, std::unique_ptr<Chunk>>;
+
 class World;
 
 class ChunkManager
@@ -22,15 +24,18 @@ public:
 
 	~ChunkManager() = default;
 
-	Chunk& at(const glm::ivec2& key) { return m_chunks.at(key); }
-	const Chunk& at(const glm::ivec2& key) const { return m_chunks.at(key); }
+	Chunk& at(const glm::ivec2& key) { return *m_chunks.at(key); }
+	const Chunk& at(const glm::ivec2& key) const { return *m_chunks.at(key); }
 
-	std::unordered_map<glm::ivec2, Chunk>::iterator begin() { return m_chunks.begin(); }
-	std::unordered_map<glm::ivec2, Chunk>::iterator end() { return m_chunks.end(); }
+	Chunk& operator[](glm::ivec2& key) { return *m_chunks[key]; }
+	Chunk& operator[](const glm::ivec2& key) { return *m_chunks[key]; }
 
-	std::unordered_map<glm::ivec2, Chunk>& getChunks() { return m_chunks; }
+	ChunkMap::iterator begin() { return m_chunks.begin(); }
+	ChunkMap::iterator end() { return m_chunks.end(); }
 
-	void add(glm::ivec2&& key, Chunk&& chunk);
+	ChunkMap& getChunks() { return m_chunks; }
+
+	void add(const glm::ivec2& key, std::unique_ptr<Chunk>&& chunk);
 
 	void prepareChunkToBuild(const glm::ivec2& position);
 	void prepareChunkToBuild(int x, int z) { prepareChunkToBuild({x, z}); }
@@ -44,7 +49,7 @@ public:
 private:
 	World* m_world = nullptr;
 	ChunkMeshBuilder m_chunkBuilder;
-	std::unordered_map<glm::ivec2, Chunk> m_chunks;
+	ChunkMap m_chunks;
 	std::unordered_set<glm::ivec2> m_keysToBuild;
 	std::unordered_set<glm::ivec2> m_keysToDelete;
 };
