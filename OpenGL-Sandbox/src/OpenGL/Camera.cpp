@@ -5,11 +5,29 @@
 #include<GLCore/Core/Application.h>
 #include<GLCore/Core/Input.h>
 
+namespace
+{
+	constexpr float terminalVelocity = -50.f;
+	constexpr float gravity = 0.05f;
+	constexpr float jumpPower = 14.f;
+}
+
 
 void Camera::update(GLCore::Timestep ts)
 {
 	position += velocity * ts.GetSeconds();
-	velocity *= 0.95f;
+	velocity.x *= 0.95f;
+	velocity.z *= 0.95f;
+
+	if(!flying)
+	{
+		if(velocity.y >= terminalVelocity)
+		velocity.y -= gravity;
+	}
+	else
+	{
+		velocity.y *= 0.95f;
+	}
 }
 
 void Camera::input()
@@ -35,13 +53,24 @@ void Camera::input()
 		velocity.x += speed * glm::cos(glm::radians(rotation.x));
 	}
 
-	if(GLCore::Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT) || GLCore::Input::IsKeyPressed(GLFW_KEY_LEFT_CONTROL))
+	if((GLCore::Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT) || GLCore::Input::IsKeyPressed(GLFW_KEY_LEFT_CONTROL)) && flying)
 	{
 		velocity.y -= speed;
 	}
 	if(GLCore::Input::IsKeyPressed(GLFW_KEY_SPACE))
 	{
-		velocity.y += speed;
+		if(!flying && canJump)
+		{
+			velocity.y = jumpPower;
+			canJump = false;
+		}
+		else if(flying)
+			velocity.y += speed;
+	}
+
+	if(GLCore::Input::IsKeyPressed(GLFW_KEY_F))
+	{
+		flying = !flying;
 	}
 
 	auto& window = GLCore::Application::Get().GetWindow();

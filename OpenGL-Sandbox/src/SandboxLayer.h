@@ -7,6 +7,7 @@
 #include"OpenGL/Buffer/VertexArray.h"
 #include"OpenGL/Model2D.h"
 #include"OpenGL/Texture.h"
+#include"Game/Physics/AABB.h"
 
 class Clock;
 
@@ -23,9 +24,12 @@ public:
 	virtual void OnImGuiRender() override;
 private:
 	void raycast(Clock& clock);
+	void handleCollision();
+	void updateBoundingBoxes();
 private:
 	Camera m_camera;
 	World m_world;
+	std::vector<AABB> m_boundingBoxes;
 
 	Model2D m_crosshair;
 	std::unordered_map<std::string, Texture> m_textures;

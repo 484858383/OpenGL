@@ -20,7 +20,10 @@ public:
 	glm::vec3 position = glm::vec3(0.f);
 	glm::vec3 rotation = glm::vec3(0.f);
 	glm::vec3 velocity = glm::vec3(0.f);
-	float speed = 4.f;
+	glm::vec3 size = glm::vec3(0.5f, 2.f, 0.5f);
+	float speed = 1.f;
+	bool flying = true;
+	bool canJump = true;
 private:
 	glm::mat4 m_projectionMatrix;
 };
