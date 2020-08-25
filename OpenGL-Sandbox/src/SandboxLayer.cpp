@@ -86,7 +86,7 @@ void SandboxLayer::OnUpdate(Timestep ts)
 	m_camera.update(ts);
 
 	updateBoundingBoxes();
-	handleCollision();
+	handleCollisions();
 
 	Renderer::clear();
 
@@ -130,8 +130,16 @@ void SandboxLayer::raycast(Clock& clock)
 					m_world.setBlock(position.x, position.y, position.z, ChunkBlock::air);
 				else if(Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_2))
 				{
-					m_world.setBlock(std::floor(lastPosition.x), std::floor(lastPosition.y), std::floor(lastPosition.z), ChunkBlock::grass);
 					glm::vec3 pos = {std::floor(lastPosition.x), std::floor(lastPosition.y), std::floor(lastPosition.z)};
+					auto aabb = getCameraBoundingBox();
+					glm::vec3 floorCameraPos1 = {std::floor(aabb.position.x), std::floor(aabb.position.y), std::floor(aabb.position.z)};
+					glm::vec3 floorCameraPos2 = {std::floor(aabb.position.x), std::floor(aabb.position.y) + 1, std::floor(aabb.position.z)};
+
+					LOG_INFO("pos: {}, camera pos {}", pos.x, aabb.position.x);
+					if(pos == floorCameraPos1 || pos == floorCameraPos2)
+						break;
+
+					m_world.setBlock(std::floor(lastPosition.x), std::floor(lastPosition.y), std::floor(lastPosition.z), ChunkBlock::grass);
 					m_boundingBoxes.emplace_back(pos, glm::vec3(1, 1, 1));
 				}
 				break;
@@ -142,11 +150,9 @@ void SandboxLayer::raycast(Clock& clock)
 	}
 }
 
-void SandboxLayer::handleCollision()
+void SandboxLayer::handleCollisions()
 {
-	//displacements are used to change the position of the cameras bounding box so that it doesnt clip into blocks
-	glm::vec3 displacements = {0.2f, 2.f, 0.2f};
-	AABB cameraBox = {m_camera.position - displacements, m_camera.size};
+	AABB cameraBox = getCameraBoundingBox();
 
 	for(auto& box : m_boundingBoxes)
 	{
@@ -155,9 +161,16 @@ void SandboxLayer::handleCollision()
 		float dz = 0;
 
 		//distances used to calculate deltas.
+		//calculate the distances between min and max extents
 		glm::vec3 minMinDistance = cameraBox.minExtent - box.minExtent + cameraBox.size;
 		glm::vec3 minMaxDistance = cameraBox.minExtent - box.maxExtent + cameraBox.size - 0.5f * box.size;
 
+		//check if one of the camera's extents is inside a given bounding boxes' extents
+		//depending on which of the camera's extents (min or max extents) fall between the boxes extents,
+		//the distance (dx/y/z) is set accordingly 
+		//finally after checking each dimension i calculate which delta is the shortest and push the camera in that direction by that amount
+		//this solution is likely not the fastest or most clean but this does make intuitive sense (at least to me), this solution was figured out,
+		//completely by myself and will likely be improved on my next project that uses AABB collision
 		if(cameraBox.maxExtent.x > box.minExtent.x)
 		{
 			if(cameraBox.maxExtent.x < box.maxExtent.x)
@@ -180,7 +193,7 @@ void SandboxLayer::handleCollision()
 			else if(cameraBox.minExtent.y < box.maxExtent.y)
 			{
 				dy = minMaxDistance.y;
-				dy -= 1.5f;
+				dy -= 1.3f;
 			}
 		}
 
@@ -208,10 +221,11 @@ void SandboxLayer::handleCollision()
 			}
 			if(smallestDistance == glm::abs(dy))
 			{
-				LOG_INFO("jump");
 				m_camera.position.y -= dy;
 				m_camera.velocity.y = 0;
-				m_camera.canJump = true;
+				//if the box i colided with is above me, do not reset my jump
+				if(box.position.y < cameraBox.position.y)
+					m_camera.canJump = true;
 			}
 			if(smallestDistance == glm::abs(dz))
 			{
@@ -226,28 +240,26 @@ void SandboxLayer::handleCollision()
 void SandboxLayer::updateBoundingBoxes()
 {
 	m_boundingBoxes.clear();
-	//for(int y = -1; y <= 1; y++)
-	//for(int x = -1; x <= 1; x++)
-	//for(int z = -1; z <= 1; z++)
-	//{
-	//	glm::vec3 position = glm::vec3(x, y, z) - m_camera.position;
-
-	//	if(x == 0 || y == 0 || z == 0)
-	//		return;
-	//	if(m_world.getBlock(position.x, position.y, position.z).getData().hasCollision)
-	//	{
-	//		
-	//		m_boundingBoxes.emplace_back(position, glm::vec3(1, 1, 1));
-	//	}
-	//}
-
-	auto block = m_world.getBlock(std::floor(m_camera.position.x), std::floor(m_camera.position.y) - 2, std::floor(m_camera.position.z));
-	auto blockPos = m_camera.position;
-	blockPos.y -= 2;
-	if(block.getData().hasCollision)
+	
+	for(int x = -2; x <= 2; x++)
+	for(int z = -2; z <= 2; z++)
+	for(int y = -2; y <= 2; y++)
 	{
-		//LOG_INFO("{}", block.getID());
-		glm::vec3 pos = {std::floor(m_camera.position.x), std::floor(m_camera.position.y) - 2, std::floor(m_camera.position.z)};
-		m_boundingBoxes.emplace_back(pos, glm::vec3(1, 1, 1));
+		glm::vec3 blockPos = {std::floor(m_camera.position.x) + x, std::floor(m_camera.position.y) + y, std::floor(m_camera.position.z) + z};
+
+		auto block = m_world.getBlock(static_cast<glm::ivec3>(blockPos));
+
+		if(block.getData().hasCollision)
+		{
+			glm::vec3 pos = {std::floor(m_camera.position.x) + x, std::floor(m_camera.position.y) + y, std::floor(m_camera.position.z) + z};
+			m_boundingBoxes.emplace_back(blockPos, glm::vec3(1, 1, 1));
+		}
 	}
+}
+
+AABB SandboxLayer::getCameraBoundingBox()
+{
+	//displacements are used to change the position of the cameras bounding box so that it doesnt clip into blocks
+	static glm::vec3 displacements = {0.2f, 1.8f, 0.2f};
+	return {m_camera.position - displacements, m_camera.size};
 }

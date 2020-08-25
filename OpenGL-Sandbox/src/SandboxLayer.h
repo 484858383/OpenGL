@@ -24,10 +24,13 @@ public:
 	virtual void OnImGuiRender() override;
 private:
 	void raycast(Clock& clock);
-	void handleCollision();
+	void handleCollisions();
 	void updateBoundingBoxes();
+
+	AABB getCameraBoundingBox();
 private:
 	Camera m_camera;
+
 	World m_world;
 	std::vector<AABB> m_boundingBoxes;
 

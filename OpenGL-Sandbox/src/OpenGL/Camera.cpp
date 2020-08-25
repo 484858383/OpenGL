@@ -10,6 +10,7 @@ namespace
 	constexpr float terminalVelocity = -50.f;
 	constexpr float gravity = 0.05f;
 	constexpr float jumpPower = 14.f;
+	constexpr float sensitivity = 0.1f;
 }
 
 
@@ -82,7 +83,7 @@ void Camera::input()
 	delta.x = mousePos.x - lastMousePos.x;
 	delta.y = lastMousePos.y - mousePos.y;
 
-	delta *= 0.1f;
+	delta *= sensitivity;
 
 	rotation.x += delta.x;
 	rotation.y -= delta.y;
