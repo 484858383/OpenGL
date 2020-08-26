@@ -15,6 +15,7 @@ enum class ChunkBlock
 	snow = 10,
 	grass_foliage,
 	rose,
+	light_block,
 
 	LAST
 };

@@ -10,7 +10,7 @@
 #include"../../Clock.h"
 
 Renderer::Renderer()
-	:m_chunkShader("3dVert", "TextureFrag"), m_2dTextureShader("2dVert", "TextureFrag")
+	:m_chunkShader("3dVert", "LightFrag"), m_2dTextureShader("2dVert", "TextureFrag")
 	,m_waterShader("WaterVert", "TextureFrag"), m_skyboxShader("SkyboxVert", "SkyboxFrag"),
 	m_skybox("default")
 {
@@ -68,6 +68,7 @@ void Renderer::drawChunks(float time)
 {
 	m_chunkShader.bind();
 	m_chunkShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
+	m_chunkShader.loadUniform("u_lightPos", m_camera->position.x, m_camera->position.y, m_camera->position.z);
 	TextureAtlas::bind();
 
 	for(const Chunk* chunk : m_chunks)

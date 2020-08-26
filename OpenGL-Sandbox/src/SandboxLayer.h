@@ -30,6 +30,7 @@ private:
 	AABB getCameraBoundingBox();
 private:
 	Camera m_camera;
+	ChunkBlock m_currentBlock = ChunkBlock::air;
 
 	World m_world;
 	std::vector<AABB> m_boundingBoxes;

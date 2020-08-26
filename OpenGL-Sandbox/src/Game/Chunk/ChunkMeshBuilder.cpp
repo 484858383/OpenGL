@@ -68,6 +68,23 @@ namespace
 		1, 1, 0,
 	};
 
+	std::vector<float> faceNormals =
+	{
+		 0,  0,  1, //front
+		 0,  0, -1, //back
+		-1,  0,  0, //left
+		 1,  0,  0, //right
+		 0,  1,  0, //top
+		 0, -1,  0  //bottom
+	};
+
+	//unsure about these
+	std::vector<float> xFaceNormals =
+	{
+		1, 0, -1, //xface 1
+		1, 0,  1  //xface 2
+	};
+
 	glm::ivec3 front = { 0,  0,  1};
 	glm::ivec3 back =  { 0,  0, -1};
 	glm::ivec3 left =  {-1,  0,  0};
@@ -83,7 +100,6 @@ enum class direction : int
 	top, bottom,
 	xFace1, xFace2
 };
-
 
 void ChunkMeshBuilder::beginMesh(Chunk& chunk, World& world)
 {
@@ -165,8 +181,10 @@ void ChunkMeshBuilder::tryToAddFace(const glm::ivec3& worldPosition, const glm::
 void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, direction dir, Mesh& mesh, unsigned& indexCounter)
 {
 	float* faceData = nullptr;
+	float* normals = faceNormals.data();
 	const glm::ivec2* texCoords = nullptr;
 	float faceBrightness = 1.f;
+	int normalsOffset = 0;
 
 	switch(dir)
 	{
@@ -175,6 +193,7 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 			faceData = frontFace.data();
 			texCoords = &block.getData().sideTextureCoords;
 			faceBrightness = 0.6f;
+			normalsOffset = 0;
 		}
 		break;
 		case direction::back:
@@ -182,6 +201,7 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 			faceData = backFace.data();
 			texCoords = &block.getData().sideTextureCoords;
 			faceBrightness = 0.6f;
+			normalsOffset = 3;
 		}
 		break;
 		case direction::left:
@@ -189,6 +209,7 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 			faceData = leftFace.data();
 			texCoords = &block.getData().sideTextureCoords;
 			faceBrightness = 0.6f;
+			normalsOffset = 6;
 		}
 		break;
 		case direction::right:
@@ -196,6 +217,7 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 			faceData = rightFace.data();
 			texCoords = &block.getData().sideTextureCoords;
 			faceBrightness = 0.6f;
+			normalsOffset = 9;
 		}
 		break;
 		case direction::top:
@@ -203,6 +225,7 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 			faceData = topFace.data();
 			texCoords = &block.getData().topTextureCoords;
 			faceBrightness = 1.f;
+			normalsOffset = 12;
 		}
 		break;
 		case direction::bottom:
@@ -210,6 +233,7 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 			faceData = bottomFace.data();
 			texCoords = &block.getData().bottomTextureCoords;
 			faceBrightness = 0.3f;
+			normalsOffset = 15;
 		}
 		break;
 		case direction::xFace1:
@@ -217,6 +241,8 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 			faceData = xFace1.data();
 			texCoords = &block.getData().sideTextureCoords;
 			faceBrightness = 1.f;
+			normals = xFaceNormals.data();
+			normalsOffset = 0;
 		}
 		break;
 		case direction::xFace2:
@@ -224,6 +250,8 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 			faceData = xFace2.data();
 			texCoords = &block.getData().sideTextureCoords;
 			faceBrightness = 1.f;
+			normals = xFaceNormals.data();
+			normalsOffset = 3;
 		}
 		break;
 		default:
@@ -235,6 +263,7 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 	auto& vertexPositions = mesh.positions;
 	auto& vertexTextureCoords = mesh.textureCoords;
 	auto& vertexBrightness = mesh.faceBrightness;
+	auto& vertexNormals = mesh.normals;
 
 	if(block.getData().isLiquid)
 		faceBrightness = 1.f;
@@ -247,6 +276,9 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 		vertexPositions.emplace_back(faceData[i]     + x + m_chunk->getPosition().x * WorldConstants::ChunkSize);
 		vertexPositions.emplace_back(faceData[i + 1] + y);
 		vertexPositions.emplace_back(faceData[i + 2] + z + m_chunk->getPosition().y * WorldConstants::ChunkSize);
+		vertexNormals.emplace_back(normals[normalsOffset]);
+		vertexNormals.emplace_back(normals[normalsOffset + 1]);
+		vertexNormals.emplace_back(normals[normalsOffset + 2]);
 	}
 
 	vertexTextureCoords.insert(vertexTextureCoords.end(), texCoordData.begin(), texCoordData.end());

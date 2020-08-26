@@ -17,6 +17,15 @@
 #include"Game/Physics/Ray.h"
 #include"Clock.h"
 
+//TODO:
+//fix lighting bug for x shaped meshes
+//dynamic lights
+//create a directional light that represents the sun
+//materials (maybe lower on the list)
+//shadows
+//day/night cycle maybe
+//change terrain generation so that trees generate properly
+
 using namespace GLCore;
 
 SandboxLayer::SandboxLayer()
@@ -36,6 +45,7 @@ void SandboxLayer::OnAttach()
 	Renderer::init(m_camera);
 	m_camera.speed = .5f;
 	m_camera.position.y = 32.f;
+	m_currentBlock = ChunkBlock::light_block;
 
 	//this should and will be moved onto a new layer (maybe "uiLayer" or "2dLayer") when more 2d visuals are needed
 	std::vector<GLfloat> crosshairVertices =
@@ -135,11 +145,10 @@ void SandboxLayer::raycast(Clock& clock)
 					glm::vec3 floorCameraPos1 = {std::floor(aabb.position.x), std::floor(aabb.position.y), std::floor(aabb.position.z)};
 					glm::vec3 floorCameraPos2 = {std::floor(aabb.position.x), std::floor(aabb.position.y) + 1, std::floor(aabb.position.z)};
 
-					LOG_INFO("pos: {}, camera pos {}", pos.x, aabb.position.x);
 					if(pos == floorCameraPos1 || pos == floorCameraPos2)
 						break;
 
-					m_world.setBlock(std::floor(lastPosition.x), std::floor(lastPosition.y), std::floor(lastPosition.z), ChunkBlock::grass);
+					m_world.setBlock(std::floor(lastPosition.x), std::floor(lastPosition.y), std::floor(lastPosition.z), m_currentBlock);
 					m_boundingBoxes.emplace_back(pos, glm::vec3(1, 1, 1));
 				}
 				break;
