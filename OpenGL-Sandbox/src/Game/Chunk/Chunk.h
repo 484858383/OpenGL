@@ -1,7 +1,10 @@
 #pragma once
 
+#include"../../Utility/Hasher.h"
+
 #include<array>
 #include<glm/glm.hpp>
+#include<unordered_set>
 
 #include"../World/WorldConstants.h"
 #include"../World/TerrainGenerator.h"
@@ -41,6 +44,8 @@ public:
 
 	void setHeightMap(const ChunkHeightMap& heightMap) { m_heightMap = heightMap; }
 	int getHeightAt(int x, int z) const;
+
+	const std::unordered_set<glm::ivec3> getLightPositions() const { return m_lightPositions; }
 private:
 	int index(const glm::ivec3& pos) const;
 	int index(int x, int y, int z) const;
@@ -49,6 +54,7 @@ private:
 	bool outOfBounds(int x, int y, int z) const;
 private:
 	std::array<ChunkBlock, WorldConstants::ChunkVolume> m_blocks;
+	std::unordered_set<glm::ivec3> m_lightPositions;
 	ChunkHeightMap m_heightMap;
 	glm::ivec2 m_position;
 

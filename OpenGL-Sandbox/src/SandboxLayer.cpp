@@ -18,7 +18,6 @@
 #include"Clock.h"
 
 //TODO:
-//dynamic lights
 //create a directional light that represents the sun
 //materials (maybe lower on the list)
 //shadows

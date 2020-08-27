@@ -69,6 +69,24 @@ void Renderer::drawChunks(float time)
 	m_chunkShader.bind();
 	m_chunkShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
 	m_chunkShader.loadUniform("u_lightPos", m_camera->position.x, m_camera->position.y, m_camera->position.z);
+
+	int i = 0;
+
+	for(const Chunk* chunk : m_chunks)
+	{
+		if(i >= 3)
+			break;
+
+		auto& lightPositions = chunk->getLightPositions();
+		for(auto& position : lightPositions)
+		{
+			m_chunkShader.loadUniform("u_lightPositions[" + std::to_string(i) + "]", position.x + 0.5f, position.y + 0.5f, position.z + 0.5f);
+			i++;
+		}
+	}
+
+	m_chunkShader.loadUniform("u_numberUsedLights", i);
+
 	TextureAtlas::bind();
 
 	for(const Chunk* chunk : m_chunks)

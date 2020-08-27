@@ -31,6 +31,15 @@ void Chunk::setBlock(int x, int y, int z, ChunkBlock block)
 	if(outOfBounds(x, y, z))
 		return;
 
+	glm::ivec3 position = glm::ivec3(x, y, z);
+	position.x += m_position.x * WorldConstants::ChunkSize;
+	position.z += m_position.y * WorldConstants::ChunkSize;
+
+	if(block == ChunkBlock::light_block)
+		m_lightPositions.insert(position);
+	if(block == ChunkBlock::air && m_lightPositions.find(position) != m_lightPositions.end())
+		m_lightPositions.erase(position);
+
 	 m_blocks[index(x, y, z)] = block;
 }
 
