@@ -48,6 +48,7 @@ private:
 	Shader m_2dTextureShader;
 	Shader m_waterShader;
 	Shader m_skyboxShader;
+	Shader m_xFaceShader; //a simple way to fix the lighting problem for x faced meshes is to render them using a basic texture fragment shader with attenuation added
 private:
 	//tools
 	Camera* m_camera = nullptr;

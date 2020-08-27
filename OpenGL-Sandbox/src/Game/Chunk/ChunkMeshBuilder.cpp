@@ -140,6 +140,7 @@ void ChunkMeshBuilder::endMesh()
 	m_chunk->m_blockMesh.addAttributes(m_mesh.blockMesh);
 	m_chunk->m_waterMesh.addAttributes(m_mesh.waterMesh);
 	m_chunk->m_translucentBlocksMesh.addAttributes(m_mesh.translucentBlockMesh);
+	m_chunk->m_xFaceMesh.addAttributes(m_mesh.xFaceMesh);
 
 	m_mesh.clear();
 
@@ -164,12 +165,12 @@ void ChunkMeshBuilder::tryToAddFace(const glm::ivec3& worldPosition, const glm::
 			else if(block.getData().isTranslucent)
 				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
 							  block, dir, m_mesh.translucentBlockMesh, m_mesh.translucentIndexCount);
-			else if(block == ChunkBlock::grass_foliage || block.getData().isTransparent || block.getData().isTranslucent)
+			else if(block.getData().isFoliage)
 			{
 				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
-							  block, direction::xFace1, m_mesh.translucentBlockMesh, m_mesh.translucentIndexCount);
+							  block, direction::xFace1, m_mesh.xFaceMesh, m_mesh.xFaceIndexCount);
 				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
-							  block, direction::xFace2, m_mesh.translucentBlockMesh, m_mesh.translucentIndexCount);
+							  block, direction::xFace2, m_mesh.xFaceMesh, m_mesh.xFaceIndexCount);
 			}
 			else
 				addFaceToMesh(localPosition.x, localPosition.y, localPosition.z,
@@ -183,7 +184,6 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 	float* faceData = nullptr;
 	float* normals = faceNormals.data();
 	const glm::ivec2* texCoords = nullptr;
-	float faceBrightness = 1.f;
 	int normalsOffset = 0;
 
 	switch(dir)
@@ -192,7 +192,6 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 		{
 			faceData = frontFace.data();
 			texCoords = &block.getData().sideTextureCoords;
-			faceBrightness = 0.6f;
 			normalsOffset = 0;
 		}
 		break;
@@ -200,7 +199,6 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 		{
 			faceData = backFace.data();
 			texCoords = &block.getData().sideTextureCoords;
-			faceBrightness = 0.6f;
 			normalsOffset = 3;
 		}
 		break;
@@ -208,7 +206,6 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 		{
 			faceData = leftFace.data();
 			texCoords = &block.getData().sideTextureCoords;
-			faceBrightness = 0.6f;
 			normalsOffset = 6;
 		}
 		break;
@@ -216,7 +213,6 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 		{
 			faceData = rightFace.data();
 			texCoords = &block.getData().sideTextureCoords;
-			faceBrightness = 0.6f;
 			normalsOffset = 9;
 		}
 		break;
@@ -224,7 +220,6 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 		{
 			faceData = topFace.data();
 			texCoords = &block.getData().topTextureCoords;
-			faceBrightness = 1.f;
 			normalsOffset = 12;
 		}
 		break;
@@ -232,7 +227,6 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 		{
 			faceData = bottomFace.data();
 			texCoords = &block.getData().bottomTextureCoords;
-			faceBrightness = 0.3f;
 			normalsOffset = 15;
 		}
 		break;
@@ -240,7 +234,6 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 		{
 			faceData = xFace1.data();
 			texCoords = &block.getData().sideTextureCoords;
-			faceBrightness = 1.f;
 			normals = xFaceNormals.data();
 			normalsOffset = 0;
 		}
@@ -249,7 +242,6 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 		{
 			faceData = xFace2.data();
 			texCoords = &block.getData().sideTextureCoords;
-			faceBrightness = 1.f;
 			normals = xFaceNormals.data();
 			normalsOffset = 3;
 		}
@@ -262,14 +254,7 @@ void ChunkMeshBuilder::addFaceToMesh(int x, int y, int z, const Block& block, di
 
 	auto& vertexPositions = mesh.positions;
 	auto& vertexTextureCoords = mesh.textureCoords;
-	auto& vertexBrightness = mesh.faceBrightness;
 	auto& vertexNormals = mesh.normals;
-
-	if(block.getData().isLiquid)
-		faceBrightness = 1.f;
-
-	for(int i = 0; i < 4; i++)
-		vertexBrightness.emplace_back(faceBrightness);
 
 	for(int i = 0; i < 12; i += 3)
 	{

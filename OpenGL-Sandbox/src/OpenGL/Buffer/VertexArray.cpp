@@ -73,7 +73,6 @@ void VertexArray::addAttributes(const Mesh& mesh)
 
 	addAttribute("a_position", mesh.positions, 3);
 	addAttribute("a_texCoords", mesh.textureCoords, 2);
-	addAttribute("a_faceBrightness", mesh.faceBrightness, 1);
 	addAttribute("a_normals", mesh.normals, 3);
 
 	addIndexBuffer(mesh.indices);

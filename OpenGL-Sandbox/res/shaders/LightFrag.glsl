@@ -3,7 +3,6 @@
 out vec4 outColor;
 
 in vec2 v_texCoords;
-in float v_faceBrightness;
 in vec3 v_normals;
 in vec3 v_fragPos;
 

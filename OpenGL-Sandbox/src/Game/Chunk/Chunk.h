@@ -37,6 +37,7 @@ public:
 	const VertexArray& getBlockMesh() const { return m_blockMesh; }
 	const VertexArray& getWaterMesh() const { return m_waterMesh; }
 	const VertexArray& getTranslucentMesh() const { return m_translucentBlocksMesh; }
+	const VertexArray& getXfaceMesh() const { return m_xFaceMesh; }
 
 	void setHeightMap(const ChunkHeightMap& heightMap) { m_heightMap = heightMap; }
 	int getHeightAt(int x, int z) const;
@@ -54,4 +55,5 @@ private:
 	VertexArray m_blockMesh;
 	VertexArray m_waterMesh;
 	VertexArray m_translucentBlocksMesh;
+	VertexArray m_xFaceMesh;
 };

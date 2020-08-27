@@ -12,7 +12,7 @@
 Renderer::Renderer()
 	:m_chunkShader("3dVert", "LightFrag"), m_2dTextureShader("2dVert", "TextureFrag")
 	,m_waterShader("WaterVert", "TextureFrag"), m_skyboxShader("SkyboxVert", "SkyboxFrag"),
-	m_skybox("default")
+	m_skybox("default"), m_xFaceShader("3dVert", "xFaceMeshFrag")
 {
 	glfwSetInputMode(static_cast<GLFWwindow*>(GLCore::Application::Get().GetWindow().GetNativeWindow()),
 					 GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -93,10 +93,21 @@ void Renderer::drawChunks(float time)
 		glDrawElements(GL_TRIANGLES, waterIndicesCount, GL_UNSIGNED_INT, nullptr);
 	}
 
-	m_chunkShader.bind();
-	m_chunkShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
+	m_xFaceShader.bind();
+	m_xFaceShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
+	m_xFaceShader.loadUniform("u_cameraPos", m_camera->position.x, m_camera->position.y, m_camera->position.z);
 
 	glDisable(GL_CULL_FACE);
+
+	for(const Chunk* chunk : m_chunks)
+	{
+		unsigned xFaceIndicesCount = chunk->getXfaceMesh().getNumberIndicies();
+
+		chunk->getXfaceMesh().bind();
+		glDrawElements(GL_TRIANGLES, xFaceIndicesCount, GL_UNSIGNED_INT, nullptr);
+	}
+
+	m_chunkShader.bind();
 
 	for(const Chunk* chunk : m_chunks)
 	{
@@ -110,7 +121,7 @@ void Renderer::drawChunks(float time)
 
 	m_chunks.clear();
 }
-#include<glm/gtc/matrix_transform.hpp>
+
 void Renderer::drawSkybox(float time)
 {
 	glDepthFunc(GL_LEQUAL);
