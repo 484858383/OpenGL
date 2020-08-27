@@ -11,8 +11,8 @@
 
 Renderer::Renderer()
 	:m_chunkShader("3dVert", "LightFrag"), m_2dTextureShader("2dVert", "TextureFrag")
-	,m_waterShader("WaterVert", "TextureFrag"), m_skyboxShader("SkyboxVert", "SkyboxFrag"),
-	m_skybox("default"), m_xFaceShader("3dVert", "xFaceMeshFrag")
+	,m_waterShader("WaterVert", "SimpleLightFrag"), m_skyboxShader("SkyboxVert", "SkyboxFrag"),
+	m_skybox("default"), m_xFaceShader("3dVert", "SimpleLightFrag")
 {
 	glfwSetInputMode(static_cast<GLFWwindow*>(GLCore::Application::Get().GetWindow().GetNativeWindow()),
 					 GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -82,6 +82,7 @@ void Renderer::drawChunks(float time)
 	m_waterShader.bind();
 	m_waterShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
 	m_waterShader.loadUniform("u_time", (float)m_clock.getSeconds());
+	m_waterShader.loadUniform("u_cameraPos", m_camera->position.x, m_camera->position.y, m_camera->position.z);
 
 	for(const Chunk* chunk : m_chunks)
 	{

@@ -4,6 +4,7 @@ layout (location = 0) in vec3 a_position;
 layout (location = 1) in vec2 a_texCoords;
 
 out vec2 v_texCoords;
+out vec3 v_fragPos;
 
 uniform mat4 u_projView;
 uniform float u_time;
@@ -11,6 +12,7 @@ uniform float u_time;
 void main()
 {
 	v_texCoords = a_texCoords;
+	v_fragPos = a_position;
 
 	float y = a_position.y - 0.1;
 	y += 0.05 * cos(a_position.x + 3 * u_time);

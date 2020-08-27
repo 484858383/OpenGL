@@ -18,7 +18,6 @@
 #include"Clock.h"
 
 //TODO:
-//fix lighting bug for x shaped meshes
 //dynamic lights
 //create a directional light that represents the sun
 //materials (maybe lower on the list)
