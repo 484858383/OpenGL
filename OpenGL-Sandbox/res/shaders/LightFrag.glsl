@@ -9,9 +9,12 @@ in vec3 v_fragPos;
 const int max_lights = 32;
 
 uniform sampler2D u_texture;
+
 uniform vec3 u_lightPos;
 uniform vec3 u_lightPositions[max_lights];
 uniform int u_numberUsedLights;
+
+uniform float u_time;
 
 const float ambientStrength = 0.1f;
 const vec3 lightColor = vec3(1, 1, 1);
@@ -21,6 +24,7 @@ const float k_linear = 0.045f;
 const float k_quadratic = 0.0075f;
 
 vec3 calculatePointLight(vec3 lightPos, vec3 normal, vec3 fragPos);
+vec3 calculateDirectionalLight(vec3 direction, vec3 normal);
 
 float calculateAttenuation(vec3 lightPos, vec3 fragPos);
 
@@ -31,11 +35,10 @@ void main()
 		discard;
 
 	vec3 result = vec3(0, 0, 0);
+	vec3 light;
+	float att;
 
-	vec3 pointLight = calculatePointLight(u_lightPos, v_normals, v_fragPos);
-	float attenuation = calculateAttenuation(u_lightPos, v_fragPos);
-
-	//vec3 result = attenuation * pointLight * frag.xyz;
+	result += frag.xyz * u_time;
 
 	for(int i = 0; i < u_numberUsedLights; i++)
 	{
@@ -56,6 +59,13 @@ vec3 calculatePointLight(vec3 lightPos, vec3 normal, vec3 fragPos)
 
 	//vec3 diffuse = diffuseStrength * lightColor;
 
+	return (ambientStrength + diffuseStrength) * lightColor;
+}
+
+vec3 calculateDirectionalLight(vec3 direction, vec3 normal)
+{
+	vec3 lightDir = -direction;
+	float diffuseStrength = max(dot(normal, lightDir), 0.0);
 	return (ambientStrength + diffuseStrength) * lightColor;
 }
 

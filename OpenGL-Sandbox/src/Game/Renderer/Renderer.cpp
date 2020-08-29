@@ -9,6 +9,8 @@
 #include"../../OpenGL/Model2D.h"
 #include"../../Clock.h"
 
+constexpr float dayLength = 180000.f;
+
 Renderer::Renderer()
 	:m_chunkShader("3dVert", "LightFrag"), m_2dTextureShader("2dVert", "TextureFrag")
 	,m_waterShader("WaterVert", "SimpleLightFrag"), m_skyboxShader("SkyboxVert", "SkyboxFrag"),
@@ -66,15 +68,27 @@ void Renderer::initImpl(Camera& camera)
 
 void Renderer::drawChunks(float time)
 {
+	static int dayTime = 1;
+	static int cycleConstant = 1;
+
+	dayTime += cycleConstant;
+
+	if(dayTime >= 18000 || dayTime <= 0)
+		cycleConstant *= -1;
+
+	float t = dayTime / dayLength;
+	t = 0.3f;
+
 	m_chunkShader.bind();
 	m_chunkShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
 	m_chunkShader.loadUniform("u_lightPos", m_camera->position.x, m_camera->position.y, m_camera->position.z);
+	m_chunkShader.loadUniform("u_time", t);
 
 	int i = 0;
 
 	for(const Chunk* chunk : m_chunks)
 	{
-		if(i >= 3)
+		if(i >= 31)
 			break;
 
 		auto& lightPositions = chunk->getLightPositions();
@@ -101,6 +115,7 @@ void Renderer::drawChunks(float time)
 	m_waterShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
 	m_waterShader.loadUniform("u_time", (float)m_clock.getSeconds());
 	m_waterShader.loadUniform("u_cameraPos", m_camera->position.x, m_camera->position.y, m_camera->position.z);
+	m_waterShader.loadUniform("u_time", t);
 
 	for(const Chunk* chunk : m_chunks)
 	{
@@ -115,6 +130,7 @@ void Renderer::drawChunks(float time)
 	m_xFaceShader.bind();
 	m_xFaceShader.loadUniformMatrix("u_projView", m_camera->getProjectionViewMatrix());
 	m_xFaceShader.loadUniform("u_cameraPos", m_camera->position.x, m_camera->position.y, m_camera->position.z);
+	m_waterShader.loadUniform("u_time", t);
 
 	glDisable(GL_CULL_FACE);
 

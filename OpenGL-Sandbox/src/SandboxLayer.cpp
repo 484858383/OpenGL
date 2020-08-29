@@ -18,7 +18,6 @@
 #include"Clock.h"
 
 //TODO:
-//create a directional light that represents the sun
 //materials (maybe lower on the list)
 //shadows
 //day/night cycle maybe
